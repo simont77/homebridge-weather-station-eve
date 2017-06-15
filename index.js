@@ -240,20 +240,33 @@ WUWeatherStationExtended.prototype = {
 					case "snow":
 					case "sleet":
 					case "flurries":
+					case "chanceflurries":
+					case "chancesleet":
+					case "chancesnow":
 					that.conditionValue = 3
 					break;
 					case "rain":
 					case "tstorm":
 					case "tstorms":
+					case "chancerain":
+					case "chancetstorms":
 					that.conditionValue = 2
 					break;
 					case "cloudy":
 					case "fog":
-					case "partlysunny":
+					case "hazy":
+					case "mostlycloudy":
+					case "partlycloudy":
 					that.conditionValue = 1
 					break;
-					default:
+					case "partlysunny":
+					case "clear":
+					case "mostlysunny":
+					case "sunny":
 					that.conditionValue = 0
+					break;
+					default:
+					that.conditionValue = 4
 					break;
 				}
 
@@ -299,6 +312,6 @@ WUWeatherStationExtended.prototype = {
 		});
 
 		// wunderground limits to 500 api calls a day. Making a call every 4 minutes == 360 calls
-		setTimeout(this.updateWeatherConditions.bind(this), 4 * 60 * 1000);
+		setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000);
 	}
 };
