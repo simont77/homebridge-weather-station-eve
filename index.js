@@ -34,6 +34,7 @@ var CustomUUID = {
 };
 
 var CustomCharacteristic = {};
+var EveService = {};
 
 module.exports = function (homebridge) {
 	Service = homebridge.hap.Service;
@@ -165,6 +166,24 @@ module.exports = function (homebridge) {
 		this.value = this.getDefaultValue();
 	};
 	inherits(CustomCharacteristic.MeasuringStation, Characteristic);
+
+	EveService.WeatherService = function(displayName, subtype) {
+			Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
+			this.addCharacteristic(Characteristic.CurrentTemperature);
+			this.addCharacteristic(Characteristic.CurrentRelativeHumidity);
+			this.addCharacteristic(CustomCharacteristic.AirPressure);
+	};
+	inherits(EveService.WeatherService, Service);
+
+	EveService.Logging = function(displayName, subtype) {
+			Service.call(this, displayName, 'E863F007-079E-48FF-8F27-9C2605A29F52', subtype);
+			/*this.addCharacteristic(LegrandMyHome.E863F116);
+			this.addCharacteristic(LegrandMyHome.E863F117);
+			this.addCharacteristic(LegrandMyHome.E863F11C);
+			this.addCharacteristic(LegrandMyHome.E863F121);*/
+	};
+	inherits(EveService.Logging, Service);
+	
 }
 
 function WUWeatherStationExtended(log, config) {
@@ -180,19 +199,21 @@ function WUWeatherStationExtended(log, config) {
 	.setCharacteristic(Characteristic.Model, "Weather Underground")
 	.setCharacteristic(Characteristic.SerialNumber, this.location);
 
-	this.weatherStationService = new Service.TemperatureSensor(this.name);
-	// TemperatureService has just TemperatureCharacteristic by default, add more Characteristics to see them in the same accessory in Home App or Eve App
-	this.weatherStationService.addCharacteristic(Characteristic.CurrentRelativeHumidity);
+	
+	this.weatherStationService = new EveService.WeatherService(this.name);
+	
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.WeatherCondition);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.WeatherConditionCategory);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.Rain1h);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.Rain24h);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.WindDirection);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.WindSpeed);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.AirPressure);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.Visibility);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.UVIndex);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.MeasuringStation);
+	
+
+this.loggingService = new EveService.Logging(this.name);
 
 	this.updateWeatherConditions();
 }
@@ -204,7 +225,7 @@ WUWeatherStationExtended.prototype = {
 	},
 
 	getServices: function () {
-		return [this.informationService, this.weatherStationService];
+		return [this.informationService, this.weatherStationService, this.loggingService];
 	},
 
 	updateWeatherConditions: function() {
@@ -256,9 +277,9 @@ WUWeatherStationExtended.prototype = {
 					that.uvIndex = 0;
 				that.station = response['current_observation']['observation_location']['full'];
 
-				that.log("Current Weather Conditions -> Temperature: " + that.temperature + ", Humidity: " + that.humidity + ", WeatherConditionCategory: " + that.conditionValue + ", WeatherCondition: "
+				/*that.log("Current Weather Conditions -> Temperature: " + that.temperature + ", Humidity: " + that.humidity + ", WeatherConditionCategory: " + that.conditionValue + ", WeatherCondition: "
 					+ that.condition + ", Rain1h: " + that.rain_1h_metric + ", Rain24h: " + that.rain_24h_metric + ", WindDirection: " + that.windDirection + ", WindSpeed: "
-					+ that.windSpeed + ", AirPressure: " + that.airPressure + ", Visibility: " + that.visibility + ", UVIndex: " + that.uvIndex  + ", MeasuringStation: " + that.station);
+					+ that.windSpeed + ", AirPressure: " + that.airPressure + ", Visibility: " + that.visibility + ", UVIndex: " + that.uvIndex  + ", MeasuringStation: " + that.station); */
 
 				that.weatherStationService.setCharacteristic(Characteristic.CurrentTemperature, that.temperature);
 				that.weatherStationService.setCharacteristic(Characteristic.CurrentRelativeHumidity, that.humidity);
