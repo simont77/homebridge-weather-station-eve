@@ -56,7 +56,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.WeatherConditionCategory, Characteristic);
 
 	CustomCharacteristic.WeatherCondition = function() {
-		Characteristic.call(this, 'Weather Condition', CustomUUID.WeatherCondition);
+		Characteristic.call(this, 'Condizioni meteo', CustomUUID.WeatherCondition);
 		this.setProps({
 			format: Characteristic.Formats.STRING,
 			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
@@ -66,7 +66,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.WeatherCondition, Characteristic);
 
 	CustomCharacteristic.Rain1h = function() {
-		Characteristic.call(this, 'Rain last hour', CustomUUID.Rain1h);
+		Characteristic.call(this, 'Precipitazioni ultima ora', CustomUUID.Rain1h);
 		this.setProps({
 			format: Characteristic.Formats.UINT16,
 			unit: "mm",
@@ -80,7 +80,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.Rain1h, Characteristic);
 
 	CustomCharacteristic.Rain24h = function() {
-		Characteristic.call(this, 'Rain today', CustomUUID.Rain24h);
+		Characteristic.call(this, 'Precipitazioni odierne', CustomUUID.Rain24h);
 		this.setProps({
 			format: Characteristic.Formats.UINT16,
 			unit: "mm",
@@ -94,7 +94,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.Rain24h, Characteristic);
 
 	CustomCharacteristic.WindDirection = function() {
-		Characteristic.call(this, 'Wind Direction', CustomUUID.WindDirection);
+		Characteristic.call(this, 'Direzione vento', CustomUUID.WindDirection);
 		this.setProps({
 			format: Characteristic.Formats.STRING,
 			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
@@ -104,7 +104,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.WindDirection, Characteristic);
 
 	CustomCharacteristic.WindSpeed = function() {
-		Characteristic.call(this, 'Wind Speed', CustomUUID.WindSpeed);
+		Characteristic.call(this, 'Velocità vento', CustomUUID.WindSpeed);
 		this.setProps({
 			format: Characteristic.Formats.FLOAT,
 			unit: "km/h",
@@ -132,7 +132,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.AirPressure, Characteristic);
 
 	CustomCharacteristic.Visibility = function() {
-		Characteristic.call(this, 'Visibility', CustomUUID.Visibility);
+		Characteristic.call(this, 'Visibilità', CustomUUID.Visibility);
 		this.setProps({
 			format: Characteristic.Formats.UINT8,
 			unit: "km",
@@ -146,7 +146,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.Visibility, Characteristic);
 
 	CustomCharacteristic.UVIndex = function() {
-		Characteristic.call(this, 'UV Index', CustomUUID.UVIndex);
+		Characteristic.call(this, 'Indice UV', CustomUUID.UVIndex);
 		this.setProps({
 			format: Characteristic.Formats.UINT8,
 			maxValue: 10,
@@ -159,7 +159,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.UVIndex, Characteristic);
 	
 	CustomCharacteristic.MeasuringStation = function() {
-		Characteristic.call(this, 'Station', CustomUUID.MeasuringStation);
+		Characteristic.call(this, 'Stazione', CustomUUID.MeasuringStation);
 		this.setProps({
 			format: Characteristic.Formats.STRING,
 			perms: [Characteristic.Perms.READ]
