@@ -20,6 +20,6 @@
     "url": "https://github.com/naofireblade/homebridge-weather-station-extended.git"
   },
   "dependencies": {
-    "wundergroundnode": ">=0.9"
+    "wundergroundnode": ">=0.12"
   }
 }

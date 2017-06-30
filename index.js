@@ -200,10 +200,12 @@ module.exports = function (homebridge) {
 
 function WUWeatherStationExtended(log, config) {
 	this.log = log;
-	this.wunderground = new Wunderground(config['key']);
+	this.language = config['language'] | "EN";
+	this.wunderground = new Wunderground(config['key'], this.language);
 	this.name = config['name'];
 	this.location = config['location'];
 	this.timestampOfLastUpdate = 0;
+	
 
 	this.informationService = new Service.AccessoryInformation();
 	this.informationService
