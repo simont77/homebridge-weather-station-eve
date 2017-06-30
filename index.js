@@ -31,6 +31,7 @@ var CustomUUID = {
 	Visibility: 'd24ecc1e-6fad-4fb5-8137-5af88bd5e857',
 	UVIndex: '05ba0fe0-b848-4226-906d-5b64272e05ce',
 	MeasuringStation: 'd1b2787d-1fc4-4345-a20e-7b5a74d693ed',
+	LastUpdate: 'd1b27812-1fc4-4383-a20e-7b5a74d693ae',
 };
 
 var CustomCharacteristic = {};
@@ -45,7 +46,7 @@ module.exports = function (homebridge) {
 		Characteristic.call(this, 'Weather Condition Category', CustomUUID.WeatherConditionCategory);
 		this.setProps({
 			format: Characteristic.Formats.UINT8,
-			maxValue: 3,
+			maxValue: 4,
 			minValue: 0,
 			minStep: 1,
 			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
@@ -69,7 +70,7 @@ module.exports = function (homebridge) {
 		this.setProps({
 			format: Characteristic.Formats.UINT16,
 			unit: "mm",
-			maxValue: 100,
+			maxValue: 1000,
 			minValue: 0,
 			minStep: 1,
 			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
@@ -120,7 +121,7 @@ module.exports = function (homebridge) {
 		Characteristic.call(this, 'Air Pressure', CustomUUID.AirPressure);
 		this.setProps({
 			format: Characteristic.Formats.UINT16,
-			unit: "hPa",
+			unit: "mBar",
 			maxValue: 1100,
 			minValue: 700,
 			minStep: 1,
@@ -166,6 +167,17 @@ module.exports = function (homebridge) {
 		this.value = this.getDefaultValue();
 	};
 	inherits(CustomCharacteristic.MeasuringStation, Characteristic);
+	
+	CustomCharacteristic.LastUpdate = function() {
+		Characteristic.call(this, 'Ultimo update', CustomUUID.LastUpdate);
+		this.setProps({
+			format: Characteristic.Formats.STRING,
+			perms: [Characteristic.Perms.READ]
+		});
+		this.value = this.getDefaultValue();
+	};
+	inherits(CustomCharacteristic.LastUpdate, Characteristic);
+	
 
 	EveService.WeatherService = function(displayName, subtype) {
 			Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
@@ -211,6 +223,8 @@ function WUWeatherStationExtended(log, config) {
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.Visibility);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.UVIndex);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.MeasuringStation);
+	this.weatherStationService.addCharacteristic(CustomCharacteristic.LastUpdate);
+	
 	
 
 this.loggingService = new EveService.Logging(this.name);
@@ -306,12 +320,14 @@ WUWeatherStationExtended.prototype = {
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.Visibility,that.visibility);
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.UVIndex,that.uvIndex);
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, that.station);
+				that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate.toString());
+	
 			} else {
 				that.log("Error retrieving the weather conditions")
 			}
 		});
 
-		// wunderground limits to 500 api calls a day. Making a call every 4 minutes == 360 calls
+		// wunderground limits to 500 api calls a day. Making a call every 10 minutes == 144 calls
 		setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000);
 	}
 };
