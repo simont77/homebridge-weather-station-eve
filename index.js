@@ -304,7 +304,7 @@ WUWeatherStationExtended.prototype = {
 				that.uvIndex = parseInt(response['current_observation']['UV']);
 				if (isNaN(that.uvIndex) || that.uvIndex < 0)
 					that.uvIndex = 0;
-				that.station = response['current_observation']['observation_location']['full'];
+				that.station = response['current_observation']['display_location']['full'];
 
 				/*that.log("Current Weather Conditions -> Temperature: " + that.temperature + ", Humidity: " + that.humidity + ", WeatherConditionCategory: " + that.conditionValue + ", WeatherCondition: "
 					+ that.condition + ", Rain1h: " + that.rain_1h_metric + ", Rain24h: " + that.rain_24h_metric + ", WindDirection: " + that.windDirection + ", WindSpeed: "
