@@ -250,7 +250,7 @@ WUWeatherStationExtended.prototype = {
 
 		that.wunderground.conditions().request(that.location, function(err, response){
 			if (!err && response['current_observation'] && response['current_observation']['temp_c']) {
-				that.timestampOfLastUpdate = moment().locale('it').format("HH:mm:ss, dddd, DD-MM-YYYY");;
+				that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");;
 				let conditionIcon = response['current_observation']['icon']
 				that.condition = response['current_observation']['weather']
 				switch (conditionIcon) {									
