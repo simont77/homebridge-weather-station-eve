@@ -1,5 +1,6 @@
 "use strict";
 var Wunderground = require('wundergroundnode');
+const moment = require('moment');
 var inherits = require('util').inherits;
 var Service, Characteristic;
 
@@ -200,7 +201,7 @@ module.exports = function (homebridge) {
 
 function WUWeatherStationExtended(log, config) {
 	this.log = log;
-	this.language = config['language'] | "EN";
+	this.language = config['language'];
 	this.wunderground = new Wunderground(config['key'], this.language);
 	this.name = config['name'];
 	this.location = config['location'];
@@ -249,7 +250,7 @@ WUWeatherStationExtended.prototype = {
 
 		that.wunderground.conditions().request(that.location, function(err, response){
 			if (!err && response['current_observation'] && response['current_observation']['temp_c']) {
-				that.timestampOfLastUpdate = Date.now() / 1000 | 0;
+				that.timestampOfLastUpdate = moment().locale('it').format("HH:mm:ss, dddd, DD-MM-YYYY");;
 				let conditionIcon = response['current_observation']['icon']
 				that.condition = response['current_observation']['weather']
 				switch (conditionIcon) {									
@@ -322,7 +323,7 @@ WUWeatherStationExtended.prototype = {
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.Visibility,that.visibility);
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.UVIndex,that.uvIndex);
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, that.station);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate.toString());
+				that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate);
 	
 			} else {
 				that.log("Error retrieving the weather conditions")
