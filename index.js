@@ -238,6 +238,7 @@ function WUWeatherStationExtended(log, config) {
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.UVIndex);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.MeasuringStation);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.LastUpdate);
+	this.weatherStationService.addCharacteristic(CustomCharacteristic.ObservationTime);
 	
 	
 
