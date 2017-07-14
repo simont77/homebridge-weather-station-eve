@@ -33,6 +33,7 @@ var CustomUUID = {
 	UVIndex: '05ba0fe0-b848-4226-906d-5b64272e05ce',
 	MeasuringStation: 'd1b2787d-1fc4-4345-a20e-7b5a74d693ed',
 	LastUpdate: 'd1b27812-1fc4-4383-a20e-7b5a74d693ae',
+	ObservationTime: 'c1b27812-1fc4-4223-a20e-7b5f64d693ae',
 };
 
 var CustomCharacteristic = {};
@@ -179,6 +180,16 @@ module.exports = function (homebridge) {
 	};
 	inherits(CustomCharacteristic.LastUpdate, Characteristic);
 	
+	CustomCharacteristic.ObservationTime = function() {
+		Characteristic.call(this, 'Ultima osservazione', CustomUUID.ObservationTime);
+		this.setProps({
+			format: Characteristic.Formats.STRING,
+			perms: [Characteristic.Perms.READ]
+		});
+		this.value = this.getDefaultValue();
+	};
+	inherits(CustomCharacteristic.ObservationTime, Characteristic);
+	
 
 	EveService.WeatherService = function(displayName, subtype) {
 			Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
@@ -306,6 +317,7 @@ WUWeatherStationExtended.prototype = {
 				if (isNaN(that.uvIndex) || that.uvIndex < 0)
 					that.uvIndex = 0;
 				that.station = response['current_observation']['display_location']['full'];
+				that.observationTime = response['current_observation']['observation_time'];
 
 				/*that.log("Current Weather Conditions -> Temperature: " + that.temperature + ", Humidity: " + that.humidity + ", WeatherConditionCategory: " + that.conditionValue + ", WeatherCondition: "
 					+ that.condition + ", Rain1h: " + that.rain_1h_metric + ", Rain24h: " + that.rain_24h_metric + ", WindDirection: " + that.windDirection + ", WindSpeed: "
@@ -324,6 +336,7 @@ WUWeatherStationExtended.prototype = {
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.UVIndex,that.uvIndex);
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, that.station);
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate);
+				that.weatherStationService.setCharacteristic(CustomCharacteristic.ObservationTime, that.observationTime);
 	
 			} else {
 				that.log("Error retrieving the weather conditions")
