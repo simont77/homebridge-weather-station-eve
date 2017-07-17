@@ -16,6 +16,7 @@ var AirPressure;
 var Visibility;
 var UVIndex;
 var MeasuringStation;
+var timeout;
 
 var CustomUUID = {
 	// Eve
@@ -34,6 +35,7 @@ var CustomUUID = {
 	MeasuringStation: 'd1b2787d-1fc4-4345-a20e-7b5a74d693ed',
 	LastUpdate: 'd1b27812-1fc4-4383-a20e-7b5a74d693ae',
 	ObservationTime: 'c1b27812-1fc4-4223-a20e-7b5f64d693ae',
+	SelectedStation: 'a2327812-1fc4-4223-f10e-7b5f64d69334',
 };
 
 var CustomCharacteristic = {};
@@ -189,6 +191,19 @@ module.exports = function (homebridge) {
 		this.value = this.getDefaultValue();
 	};
 	inherits(CustomCharacteristic.ObservationTime, Characteristic);
+
+	CustomCharacteristic.SelectedStation = function() {
+		Characteristic.call(this, 'Stazione in uso', CustomUUID.SelectedStation);
+		this.setProps({
+			format: Characteristic.Formats.UINT8,
+			maxValue: 10,
+			minValue: 0,
+			minStep: 1,
+			perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+		});
+		this.value = this.getDefaultValue();
+	};
+	inherits(CustomCharacteristic.SelectedStation, Characteristic);
 	
 
 	EveService.WeatherService = function(displayName, subtype) {
@@ -223,7 +238,7 @@ function WUWeatherStationExtended(log, config) {
 	this.informationService
 	.setCharacteristic(Characteristic.Manufacturer, "HomeBridge")
 	.setCharacteristic(Characteristic.Model, "Weather Underground")
-	.setCharacteristic(Characteristic.SerialNumber, this.location);
+	.setCharacteristic(Characteristic.SerialNumber, this.location[1]);
 
 	
 	this.weatherStationService = new EveService.WeatherService(this.name);
@@ -239,10 +254,17 @@ function WUWeatherStationExtended(log, config) {
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.MeasuringStation);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.LastUpdate);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.ObservationTime);
+	this.weatherStationService.addCharacteristic(CustomCharacteristic.SelectedStation);
 	
-	
+	this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 
-this.loggingService = new EveService.Logging(this.name);
+	this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation)
+			.on('change', (callback) => {
+				clearTimeout(timeout);
+				this.updateWeatherConditions();
+			});
+
+	this.loggingService = new EveService.Logging(this.name);
 
 	this.updateWeatherConditions();
 }
@@ -259,8 +281,8 @@ WUWeatherStationExtended.prototype = {
 
 	updateWeatherConditions: function() {
 		var that = this
-
-		that.wunderground.conditions().request(that.location, function(err, response){
+		var station = that.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).value;
+		that.wunderground.conditions().request(that.location[station], function(err, response){
 			if (!err && response['current_observation'] && response['current_observation']['temp_c']) {
 				that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");;
 				let conditionIcon = response['current_observation']['icon']
@@ -345,6 +367,6 @@ WUWeatherStationExtended.prototype = {
 		});
 
 		// wunderground limits to 500 api calls a day. Making a call every 10 minutes == 144 calls
-		setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000);
+		timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000);
 	}
 };
