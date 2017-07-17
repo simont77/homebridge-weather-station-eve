@@ -36,6 +36,7 @@ var CustomUUID = {
 	LastUpdate: 'd1b27812-1fc4-4383-a20e-7b5a74d693ae',
 	ObservationTime: 'c1b27812-1fc4-4223-a20e-7b5f64d693ae',
 	SelectedStation: 'a2327812-1fc4-4223-f10e-7b5f64d69334',
+	StationID: 'ccb2787d-1fc4-af45-abce-7b5a12d693ed',
 };
 
 var CustomCharacteristic = {};
@@ -166,17 +167,27 @@ module.exports = function (homebridge) {
 		Characteristic.call(this, 'Stazione', CustomUUID.MeasuringStation);
 		this.setProps({
 			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ]
+			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
 		});
 		this.value = this.getDefaultValue();
 	};
 	inherits(CustomCharacteristic.MeasuringStation, Characteristic);
+
+	CustomCharacteristic.StationID = function() {
+		Characteristic.call(this, 'ID Stazione', CustomUUID.StationID);
+		this.setProps({
+			format: Characteristic.Formats.STRING,
+			perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+		});
+		this.value = this.getDefaultValue();
+	};
+	inherits(CustomCharacteristic.StationID, Characteristic);
 	
 	CustomCharacteristic.LastUpdate = function() {
 		Characteristic.call(this, 'Ultimo update', CustomUUID.LastUpdate);
 		this.setProps({
 			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ]
+			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
 		});
 		this.value = this.getDefaultValue();
 	};
@@ -186,7 +197,7 @@ module.exports = function (homebridge) {
 		Characteristic.call(this, 'Ultima osservazione', CustomUUID.ObservationTime);
 		this.setProps({
 			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ]
+			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
 		});
 		this.value = this.getDefaultValue();
 	};
@@ -255,6 +266,7 @@ function WUWeatherStationExtended(log, config) {
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.LastUpdate);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.ObservationTime);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.SelectedStation);
+	this.weatherStationService.addCharacteristic(CustomCharacteristic.StationID);
 	
 	this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 
@@ -339,7 +351,8 @@ WUWeatherStationExtended.prototype = {
 				that.uvIndex = parseInt(response['current_observation']['UV']);
 				if (isNaN(that.uvIndex) || that.uvIndex < 0)
 					that.uvIndex = 0;
-				that.station = response['current_observation']['display_location']['full'];
+				that.station = response['current_observation']['display_location']['city'];
+				that.stationID = response['current_observation']['station_id'];
 				that.observationTime = response['current_observation']['observation_time'];
 
 				/*that.log("Current Weather Conditions -> Temperature: " + that.temperature + ", Humidity: " + that.humidity + ", WeatherConditionCategory: " + that.conditionValue + ", WeatherCondition: "
@@ -360,6 +373,7 @@ WUWeatherStationExtended.prototype = {
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, that.station);
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate);
 				that.weatherStationService.setCharacteristic(CustomCharacteristic.ObservationTime, that.observationTime);
+				that.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, that.stationID);
 	
 			} else {
 				that.log("Error retrieving the weather conditions")
