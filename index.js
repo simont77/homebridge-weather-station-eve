@@ -215,7 +215,6 @@ module.exports = function (homebridge) {
 		this.value = this.getDefaultValue();
 	};
 	inherits(CustomCharacteristic.SelectedStation, Characteristic);
-	
 
 	EveService.WeatherService = function(displayName, subtype) {
 			Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
@@ -243,7 +242,7 @@ function WUWeatherStationExtended(log, config) {
 	this.name = config['name'];
 	this.location = config['location'];
 	this.timestampOfLastUpdate = 0;
-	
+	this.maxStationID=this.location.length;
 
 	this.informationService = new Service.AccessoryInformation();
 	this.informationService
@@ -269,6 +268,8 @@ function WUWeatherStationExtended(log, config) {
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.StationID);
 	
 	this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
+	this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).props.maxValue = this.maxStationID-1;
+
 
 	this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation)
 			.on('change', (callback) => {
