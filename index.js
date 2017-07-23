@@ -267,15 +267,21 @@ function WUWeatherStationExtended(log, config) {
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.SelectedStation);
 	this.weatherStationService.addCharacteristic(CustomCharacteristic.StationID);
 	
-	this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 	this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).props.maxValue = this.maxStationID-1;
 
 
 	this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation)
 			.on('change', (callback) => {
+			    this.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, this.location[value]);
+			 });
+	
+	this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID)
+			.on('change', (callback) => {
 				clearTimeout(timeout);
-				this.updateWeatherConditions();
+				this.updateWeatherConditions(value);
 			});
+			
+	this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 
 	this.loggingService = new EveService.Logging(this.name);
 
@@ -292,10 +298,10 @@ WUWeatherStationExtended.prototype = {
 		return [this.informationService, this.weatherStationService, this.loggingService];
 	},
 
-	updateWeatherConditions: function() {
+	updateWeatherConditions: function(station) {
 		var that = this
-		var station = that.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).value;
-		that.wunderground.conditions().request(that.location[station], function(err, response){
+	
+		that.wunderground.conditions().request(station, function(err, response){
 			if (!err && response['current_observation'] && response['current_observation']['temp_c']) {
 				that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");;
 				let conditionIcon = response['current_observation']['icon']
@@ -378,6 +384,7 @@ WUWeatherStationExtended.prototype = {
 	
 			} else {
 				that.log("Error retrieving the weather conditions")
+				that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, "Error!");
 			}
 		});
 
