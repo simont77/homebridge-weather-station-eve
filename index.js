@@ -389,6 +389,6 @@ WUWeatherStationExtended.prototype = {
 		});
 
 		// wunderground limits to 500 api calls a day. Making a call every 10 minutes == 144 calls
-		timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000);
+		timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000, station);
 	}
 };
