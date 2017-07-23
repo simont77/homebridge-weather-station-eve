@@ -272,20 +272,20 @@ function WUWeatherStationExtended(log, config) {
 
 	this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation)
 			.on('change', (callback) => {
-			    this.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, this.location[value]);
+			    this.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, this.location[this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).value]);
 			 });
 	
 	this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID)
 			.on('change', (callback) => {
 				clearTimeout(timeout);
-				this.updateWeatherConditions(value);
+				this.updateWeatherConditions(this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID.value);
 			});
 			
 	this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 
 	this.loggingService = new EveService.Logging(this.name);
 
-	this.updateWeatherConditions();
+	this.updateWeatherConditions(this.location[0]);
 }
 
 WUWeatherStationExtended.prototype = {
