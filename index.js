@@ -204,7 +204,7 @@ module.exports = function (homebridge) {
 	inherits(CustomCharacteristic.ObservationTime, Characteristic);
 
 	CustomCharacteristic.SelectedStation = function() {
-		Characteristic.call(this, 'Stazione in uso', CustomUUID.SelectedStation);
+		Characteristic.call(this, 'Stazione predefinita', CustomUUID.SelectedStation);
 		this.setProps({
 			format: Characteristic.Formats.UINT8,
 			maxValue: 10,
@@ -278,14 +278,14 @@ function WUWeatherStationExtended(log, config) {
 	this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID)
 			.on('change', (callback) => {
 				clearTimeout(timeout);
-				this.updateWeatherConditions(this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID.value);
+				this.updateWeatherConditions("pws:" + this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID).value);
 			});
 			
 	this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 
 	this.loggingService = new EveService.Logging(this.name);
 
-	this.updateWeatherConditions(this.location[0]);
+	this.updateWeatherConditions("pws:"+this.location[0]);
 }
 
 WUWeatherStationExtended.prototype = {
@@ -358,7 +358,7 @@ WUWeatherStationExtended.prototype = {
 				that.uvIndex = parseInt(response['current_observation']['UV']);
 				if (isNaN(that.uvIndex) || that.uvIndex < 0)
 					that.uvIndex = 0;
-				that.station = response['current_observation']['display_location']['city'];
+				that.station = response['current_observation']['observation_location']['city'];
 				that.stationID = response['current_observation']['station_id'];
 				that.observationTime = response['current_observation']['observation_time'];
 
