@@ -3,9 +3,7 @@ var Wunderground = require('wundergroundnode');
 const moment = require('moment');
 var inherits = require('util').inherits;
 var Service, Characteristic;
-
 var weatherStationService;
-
 var WeatherCondition;
 var WeatherConditionCategory;
 var Rain1h;
@@ -43,10 +41,11 @@ var CustomCharacteristic = {};
 var EveService = {};
 
 module.exports = function (homebridge) {
+	var FakeGatoHistoryService = require('./fakegato-history')(homebridge);
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 	homebridge.registerAccessory("homebridge-wunderground-extended", "WUWeatherStationExtended", WUWeatherStationExtended);
-
+	
 	CustomCharacteristic.WeatherConditionCategory = function() {
 		Characteristic.call(this, 'Weather Condition Category', CustomUUID.WeatherConditionCategory);
 		this.setProps({
@@ -224,171 +223,202 @@ module.exports = function (homebridge) {
 	};
 	inherits(EveService.WeatherService, Service);
 
-	EveService.Logging = function(displayName, subtype) {
-			Service.call(this, displayName, 'E863F007-079E-48FF-8F27-9C2605A29F52', subtype);
-			/*this.addCharacteristic(LegrandMyHome.E863F116);
-			this.addCharacteristic(LegrandMyHome.E863F117);
-			this.addCharacteristic(LegrandMyHome.E863F11C);
-			this.addCharacteristic(LegrandMyHome.E863F121);*/
-	};
-	inherits(EveService.Logging, Service);
 	
-}
 
-function WUWeatherStationExtended(log, config) {
-	this.log = log;
-	this.language = config['language'];
-	this.wunderground = new Wunderground(config['key'], this.language);
-	this.name = config['name'];
-	this.location = config['location'];
-	this.timestampOfLastUpdate = 0;
-	this.maxStationID=this.location.length;
+	function WUWeatherStationExtended(log, config) {
+		
+		this.log = log;
+		this.language = config['language'];
+		this.wunderground = new Wunderground(config['key'], this.language);
+		this.name = config['name'];
+		this.location = config['location'];
+		this.timestampOfLastUpdate = 0;
+		this.maxStationID=this.location.length;
 
-	this.informationService = new Service.AccessoryInformation();
-	this.informationService
-	.setCharacteristic(Characteristic.Manufacturer, "HomeBridge")
-	.setCharacteristic(Characteristic.Model, "Weather Underground")
-	.setCharacteristic(Characteristic.SerialNumber, this.location[1]);
+		this.informationService = new Service.AccessoryInformation();
+		this.informationService
+		.setCharacteristic(Characteristic.Manufacturer, "HomeBridge")
+		.setCharacteristic(Characteristic.Model, "Weather Underground")
+		.setCharacteristic(Characteristic.SerialNumber, this.location[1]);
 
-	
-	this.weatherStationService = new EveService.WeatherService(this.name);
-	
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.WeatherCondition);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.WeatherConditionCategory);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.Rain1h);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.Rain24h);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.WindDirection);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.WindSpeed);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.Visibility);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.UVIndex);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.MeasuringStation);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.LastUpdate);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.ObservationTime);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.SelectedStation);
-	this.weatherStationService.addCharacteristic(CustomCharacteristic.StationID);
-	
-	this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).props.maxValue = this.maxStationID-1;
+		
+		this.weatherStationService = new EveService.WeatherService(this.name);
+		
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.WeatherCondition);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.WeatherConditionCategory);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.Rain1h);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.Rain24h);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.WindDirection);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.WindSpeed);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.Visibility);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.UVIndex);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.MeasuringStation);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.LastUpdate);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.ObservationTime);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.SelectedStation);
+		this.weatherStationService.addCharacteristic(CustomCharacteristic.StationID);
+		
+		this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).props.maxValue = this.maxStationID-1;
 
 
-	this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation)
-			.on('change', (callback) => {
-			    this.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, this.location[this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).value]);
-			 });
-	
-	this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID)
-			.on('change', (callback) => {
-				clearTimeout(timeout);
-				this.updateWeatherConditions("pws:" + this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID).value);
-			});
-			
-	this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
-
-	this.loggingService = new EveService.Logging(this.name);
-
-	this.updateWeatherConditions("pws:"+this.location[0]);
-}
-
-WUWeatherStationExtended.prototype = {
-	identify: function (callback) {
-		this.log("Identify requested!");
-		callback(); // success
-	},
-
-	getServices: function () {
-		return [this.informationService, this.weatherStationService, this.loggingService];
-	},
-
-	updateWeatherConditions: function(station) {
-		var that = this
-	
-		that.wunderground.conditions().request(station, function(err, response){
-			if (!err && response['current_observation'] && response['current_observation']['temp_c']) {
-				that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");;
-				let conditionIcon = response['current_observation']['icon']
-				that.condition = response['current_observation']['weather']
-				switch (conditionIcon) {									
-					case "snow":
-					case "sleet":
-					case "flurries":
-					case "chanceflurries":
-					case "chancesleet":
-					case "chancesnow":
-					that.conditionValue = 3
-					break;
-					case "rain":
-					case "tstorm":
-					case "tstorms":
-					case "chancerain":
-					case "chancetstorms":
-					that.conditionValue = 2
-					break;
-					case "cloudy":
-					case "fog":
-					case "hazy":
-					case "mostlycloudy":
-					case "partlycloudy":
-					that.conditionValue = 1
-					break;
-					case "partlysunny":
-					case "clear":
-					case "mostlysunny":
-					case "sunny":
-					that.conditionValue = 0
-					break;
-					default:
-					that.conditionValue = 4
-					break;
-				}
-
-				that.temperature = response['current_observation']['temp_c'];
-				that.humidity = parseInt(response['current_observation']['relative_humidity'].substr(0, response['current_observation']['relative_humidity'].length-1));
-				that.uv = parseInt(response['current_observation']['UV']);
-				that.rain_1h_metric = parseInt(response['current_observation']['precip_1hr_metric']);
-				if (isNaN(that.rain_1h_metric))
-					that.rain_1h_metric = 0;
-				that.rain_24h_metric = parseInt(response['current_observation']['precip_today_metric']);
-				if (isNaN(that.rain_24h_metric))
-					that.rain_24h_metric = 0;
-				that.windDirection = response['current_observation']['wind_dir'];
-				that.windSpeed = parseFloat(response['current_observation']['wind_kph']);
-				that.airPressure = parseInt(response['current_observation']['pressure_mb']);
-				that.visibility = parseInt(response['current_observation']['visibility_km']);
-				if (isNaN(that.visibility))
-					that.visibility = 0;
-				that.uvIndex = parseInt(response['current_observation']['UV']);
-				if (isNaN(that.uvIndex) || that.uvIndex < 0)
-					that.uvIndex = 0;
-				that.station = response['current_observation']['observation_location']['city'];
-				that.stationID = response['current_observation']['station_id'];
-				that.observationTime = response['current_observation']['observation_time'];
-
-				/*that.log("Current Weather Conditions -> Temperature: " + that.temperature + ", Humidity: " + that.humidity + ", WeatherConditionCategory: " + that.conditionValue + ", WeatherCondition: "
-					+ that.condition + ", Rain1h: " + that.rain_1h_metric + ", Rain24h: " + that.rain_24h_metric + ", WindDirection: " + that.windDirection + ", WindSpeed: "
-					+ that.windSpeed + ", AirPressure: " + that.airPressure + ", Visibility: " + that.visibility + ", UVIndex: " + that.uvIndex  + ", MeasuringStation: " + that.station); */
-
-				that.weatherStationService.setCharacteristic(Characteristic.CurrentTemperature, that.temperature);
-				that.weatherStationService.setCharacteristic(Characteristic.CurrentRelativeHumidity, that.humidity);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.WeatherConditionCategory,that.conditionValue);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.WeatherCondition,that.condition);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.Rain1h,that.rain_1h_metric);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.Rain24h,that.rain_24h_metric);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.WindDirection,that.windDirection);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.WindSpeed,that.windSpeed);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.AirPressure,that.airPressure);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.Visibility,that.visibility);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.UVIndex,that.uvIndex);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, that.station);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.ObservationTime, that.observationTime);
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, that.stationID);
-	
-			} else {
-				that.log("Error retrieving the weather conditions")
-				that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, "Error!");
-			}
-		});
-
-		// wunderground limits to 500 api calls a day. Making a call every 10 minutes == 144 calls
-		timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000, station);
+		this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation)
+				.on('change', (callback) => {
+					this.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, this.location[this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).value]);
+				});
+		
+		this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID)
+				.on('change', (callback) => {
+					clearTimeout(timeout);
+					this.updateWeatherConditions("pws:" + this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID).value);
+				});
+				
+		this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
+		
+		this.loggingService = new FakeGatoHistoryService("weather");
+		this.temperature=0;
+		this.airPressure=10;
+		this.humidity=20;
+		this.updateWeatherConditions("pws:"+this.location[0]);
 	}
-};
+
+	WUWeatherStationExtended.prototype = {
+		identify: function (callback) {
+			this.log("Identify requested!");
+			callback(); // success
+		},
+
+		getServices: function () {
+			return [this.informationService, this.weatherStationService, this.loggingService];
+		},
+
+		updateWeatherConditions: function(station) {
+			var that = this
+		
+			/*that.wunderground.conditions().request(station, function(err, response){
+				if (!err && response['current_observation'] && response['current_observation']['temp_c']) {
+					that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");;
+					let conditionIcon = response['current_observation']['icon']
+					that.condition = response['current_observation']['weather']
+					switch (conditionIcon) {									
+						case "snow":
+						case "sleet":
+						case "flurries":
+						case "chanceflurries":
+						case "chancesleet":
+						case "chancesnow":
+						that.conditionValue = 3
+						break;
+						case "rain":
+						case "tstorm":
+						case "tstorms":
+						case "chancerain":
+						case "chancetstorms":
+						that.conditionValue = 2
+						break;
+						case "cloudy":
+						case "fog":
+						case "hazy":
+						case "mostlycloudy":
+						case "partlycloudy":
+						that.conditionValue = 1
+						break;
+						case "partlysunny":
+						case "clear":
+						case "mostlysunny":
+						case "sunny":
+						that.conditionValue = 0
+						break;
+						default:
+						that.conditionValue = 4
+						break;
+					}
+
+					that.temperature = response['current_observation']['temp_c'];
+					that.humidity = parseInt(response['current_observation']['relative_humidity'].substr(0, response['current_observation']['relative_humidity'].length-1));
+					that.uv = parseInt(response['current_observation']['UV']);
+					that.rain_1h_metric = parseInt(response['current_observation']['precip_1hr_metric']);
+					if (isNaN(that.rain_1h_metric))
+						that.rain_1h_metric = 0;
+					that.rain_24h_metric = parseInt(response['current_observation']['precip_today_metric']);
+					if (isNaN(that.rain_24h_metric))
+						that.rain_24h_metric = 0;
+					that.windDirection = response['current_observation']['wind_dir'];
+					that.windSpeed = parseFloat(response['current_observation']['wind_kph']);
+					that.airPressure = parseInt(response['current_observation']['pressure_mb']);
+					that.visibility = parseInt(response['current_observation']['visibility_km']);
+					if (isNaN(that.visibility))
+						that.visibility = 0;
+					that.uvIndex = parseInt(response['current_observation']['UV']);
+					if (isNaN(that.uvIndex) || that.uvIndex < 0)
+						that.uvIndex = 0;
+					that.station = response['current_observation']['observation_location']['city'];
+					that.stationID = response['current_observation']['station_id'];
+					that.observationTime = response['current_observation']['observation_time'];
+
+					that.weatherStationService.setCharacteristic(Characteristic.CurrentTemperature, that.temperature);
+					that.weatherStationService.setCharacteristic(Characteristic.CurrentRelativeHumidity, that.humidity);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.WeatherConditionCategory,that.conditionValue);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.WeatherCondition,that.condition);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.Rain1h,that.rain_1h_metric);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.Rain24h,that.rain_24h_metric);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.WindDirection,that.windDirection);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.WindSpeed,that.windSpeed);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.AirPressure,that.airPressure);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.Visibility,that.visibility);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.UVIndex,that.uvIndex);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, that.station);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.ObservationTime, that.observationTime);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, that.stationID);
+
+					if (that.nextHistoryEntry<that.maxHistory)
+					{
+						that.history[that.nextHistoryEntry] = ({time: that.timestampOfLastUpdate, temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
+						that.nextHistoryEntry++;
+					}
+					else
+					{
+						that.history[0] = ({time: that.timestampOfLastUpdate, temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
+						that.nextHistoryEntry = 1;
+					}
+
+					that.loggingService.getCharacteristic(S2R1Characteristic)
+						.updateValue(hexToBase64('3dd0000008010000b093331f040102020203020f03' + 
+									numToHex(swap16(that.nextHistoryEntry)) +'ed0f00000000000000000101'));
+
+				} else {
+					that.log("Error retrieving the weather conditions")
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, "Error!");
+				}
+			});*/
+
+			// wunderground limits to 500 api calls a day. Making a call every 10 minutes == 144 calls
+			//timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000, station);
+
+			/*if (that.loggingService.lastEntry<that.loggingService.maxHistory)
+			{
+				that.loggingService.history[that.lastEntry] = ({time: that.timestampOfLastUpdate, temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
+				that.loggingService.lastEntry++;
+			}
+			else
+			{
+				that.loggingService.history[0] = ({time: that.timestampOfLastUpdate, temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
+				that.loggingService.lastEntry = 1;
+			}
+
+			that.loggingService.getCharacteristic(S2R1Characteristic)
+				.setValue(hexToBase64('3dd0000008010000b093331f040102020203020f03' + 
+							numToHex(swap16(that.loggingService.lastEntry)) +'ed0f00000000000000000101'));
+			console.log("Last entry: "+ that.loggingService.lastEntry);*/
+			
+			
+			that.temperature++;
+			that.airPressure++;
+			that.humidity++;
+			that.loggingService.addEntry({time: moment().unix(), temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
+			timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 1000, station);
+
+		
+		}
+	};
+}
