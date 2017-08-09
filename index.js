@@ -275,9 +275,6 @@ module.exports = function (homebridge) {
 		this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 		
 		this.loggingService = new FakeGatoHistoryService("weather");
-		this.temperature=0;
-		this.airPressure=10;
-		this.humidity=20;
 		this.updateWeatherConditions("pws:"+this.location[0]);
 	}
 
@@ -294,7 +291,7 @@ module.exports = function (homebridge) {
 		updateWeatherConditions: function(station) {
 			var that = this
 		
-			/*that.wunderground.conditions().request(station, function(err, response){
+			that.wunderground.conditions().request(station, function(err, response){
 				if (!err && response['current_observation'] && response['current_observation']['temp_c']) {
 					that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");;
 					let conditionIcon = response['current_observation']['icon']
@@ -370,53 +367,22 @@ module.exports = function (homebridge) {
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate);
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.ObservationTime, that.observationTime);
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, that.stationID);
-
-					if (that.nextHistoryEntry<that.maxHistory)
-					{
-						that.history[that.nextHistoryEntry] = ({time: that.timestampOfLastUpdate, temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
-						that.nextHistoryEntry++;
-					}
-					else
-					{
-						that.history[0] = ({time: that.timestampOfLastUpdate, temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
-						that.nextHistoryEntry = 1;
-					}
-
-					that.loggingService.getCharacteristic(S2R1Characteristic)
-						.updateValue(hexToBase64('3dd0000008010000b093331f040102020203020f03' + 
-									numToHex(swap16(that.nextHistoryEntry)) +'ed0f00000000000000000101'));
-
+					
+					that.loggingService.addEntry({time: moment().unix(), temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
+					
 				} else {
 					that.log("Error retrieving the weather conditions")
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, "Error!");
 				}
-			});*/
+			});
 
-			// wunderground limits to 500 api calls a day. Making a call every 10 minutes == 144 calls
-			//timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000, station);
+			
 
-			/*if (that.loggingService.lastEntry<that.loggingService.maxHistory)
-			{
-				that.loggingService.history[that.lastEntry] = ({time: that.timestampOfLastUpdate, temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
-				that.loggingService.lastEntry++;
-			}
-			else
-			{
-				that.loggingService.history[0] = ({time: that.timestampOfLastUpdate, temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
-				that.loggingService.lastEntry = 1;
-			}
+			//wunderground limits to 500 api calls a day. Making a call every 10 minutes == 144 calls
+			timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000, station);
 
-			that.loggingService.getCharacteristic(S2R1Characteristic)
-				.setValue(hexToBase64('3dd0000008010000b093331f040102020203020f03' + 
-							numToHex(swap16(that.loggingService.lastEntry)) +'ed0f00000000000000000101'));
-			console.log("Last entry: "+ that.loggingService.lastEntry);*/
 			
 			
-			that.temperature++;
-			that.airPressure++;
-			that.humidity++;
-			that.loggingService.addEntry({time: moment().unix(), temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
-			timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 1000, station);
 
 		
 		}

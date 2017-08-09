@@ -16,15 +16,18 @@ module.exports = function(pHomebridge) {
         return new Buffer(val, 'base64').toString('hex');
     }, swap16 = function (val) {
         return ((val & 0xFF) << 8)
-            | ((val >> 8) & 0xFF);
+            | ((val >>> 8) & 0xFF);
     }, swap32 = function (val) {
-        return swap16((val & 0xFFFF0000) >> 16) | swap16(val & 0x0000FFFF)<<16;
+        return ((val & 0xFF) << 24)
+           | ((val & 0xFF00) << 8)
+           | ((val >>> 8) & 0xFF00)
+           | ((val >>> 24) & 0xFF);
     },	hexToHPA = function(val) {
         return parseInt(swap16(val), 10);
     }, hPAtoHex = function(val) {
         return swap16(Math.round(val)).toString(16);
     }, numToHex = function(val, len) {
-        var s = Number(val).toString(16);
+        var s = Number(val>>>0).toString(16);
         if(s.length % 2 != 0) {
             s = '0' + s;
         }
@@ -103,10 +106,10 @@ module.exports = function(pHomebridge) {
             
             
             this.accessoryType=accessoryType;
-            this.lastEntry = 1;
+            this.nextAvailableEntry = 1;
             this.history = [];
             this.maxHistory = 100;
-            this.currentEntry = 0;
+            this.currentEntry = 1;
             this.transfer=false;
             this.setTime=true;
             this.refTime=0;
@@ -115,19 +118,31 @@ module.exports = function(pHomebridge) {
                 
             this.addCharacteristic(S2R2Characteristic)
                 .on('get', (callback) => {
-                    if ((this.currentEntry<=this.lastEntry) && (this.transfer==true))
+                    if ((this.currentEntry<this.nextAvailableEntry) && (this.transfer==true))
                     {
                         
-                        if (this.setTime==true)
+                        if ((this.history[this.currentEntry].temp==0 &&
+                            this.history[this.currentEntry].pressure==0 &&
+                            this.history[this.currentEntry].humidity==0) || (this.setTime==true))
                         {	
-                            console.log("Data: "+ "15" + numToHex(swap16(this.currentEntry),4).toString('hex') + "0000 0000 0000 81" + numToHex(swap32(this.refTime),8) +"0000 0000 00 0000");
+                            console.log("Data: "+ "15" + numToHex(swap16(this.currentEntry),4) + "0000 0000 0000 81" + numToHex(swap32(this.refTime),8) +"0000 0000 00 0000");
                             callback(null,hexToBase64('15' + numToHex(swap16(this.currentEntry),4) +' 0000 0000 0000 81' + numToHex(swap32(this.refTime),8) + '0000 0000 00 0000'));
                             this.setTime=false;
                         }
                         else
                         {	
-                            console.log("Data: "+ "10 " + numToHex(swap16(this.currentEntry),4).toString('hex') + " 0000 " +numToHex(swap16(this.currentEntry),4).toString('hex') + " 0000 07 a60b 9c15 1302");
-                            callback(null,hexToBase64('10' + numToHex(swap16(this.currentEntry),4)+ ' 0000 ' + numToHex(swap16(this.currentEntry),4) + ' 0000 07 a60b 9c15 1302'));
+                            console.log("Data: "+ "10 " + numToHex(swap16(this.currentEntry),4) + " 0000 "
+                                    + numToHex(swap32(this.history[this.currentEntry].time-this.refTime-978307200),8)
+                                    + this.accessoryType117
+                                    + numToHex(swap16(this.history[this.currentEntry].temp*100),4) 
+                                    + numToHex(swap16(this.history[this.currentEntry].humidity*100),4) 
+                                    + numToHex(swap16(this.history[this.currentEntry].pressure*10),4));
+                            callback(null,hexToBase64('10' + numToHex(swap16(this.currentEntry),4)+ ' 0000 ' 
+                                    + numToHex(swap32(this.history[this.currentEntry].time-this.refTime-978307200),8) 
+                                    + this.accessoryType117
+                                    + numToHex(swap16(this.history[this.currentEntry].temp*100),4) 
+                                    + numToHex(swap16(this.history[this.currentEntry].humidity*100),4) 
+                                    + numToHex(swap16(this.history[this.currentEntry].pressure*10),4)));
                         }
                         this.currentEntry++;
                     }
@@ -151,27 +166,32 @@ module.exports = function(pHomebridge) {
             if (address!=0)
                 this.currentEntry = address;
             else
-                this.currentEntry = 0;
+                this.currentEntry = 1;
         }
         
+        //in order to be consistent with Eve, entry address start from 1
         addEntry(entry){
-            if (this.lastEntry<this.maxHistory)
+            if (this.nextAvailableEntry<this.maxHistory)
             {
                 if (this.refTime==0)
+                {
                     this.refTime=entry.time-978307200;
-                this.history[this.lastEntry] = (entry);
-                this.lastEntry++;
+                    this.history[this.nextAvailableEntry]= {time: entry.time, temp:0, pressure:0, humidity:0};
+                    this.nextAvailableEntry++;
+                }
+                this.history[this.nextAvailableEntry] = (entry);
+                this.nextAvailableEntry++;
             }
             else
             {
-                this.history[0] = (entry);
-                this.lastEntry = 1;
+                this.history[1] = (entry);
+                this.nextAvailableEntry = 2;
             }
 
             this.getCharacteristic(S2R1Characteristic)
-                .setValue(hexToBase64(numToHex(swap32(entry.time-this.refTime-978307200),8) + '00000000' + numToHex(swap32(this.refTime),8) + '0401020202' + this.accessoryType116 +'020f03' + numToHex(swap16(this.lastEntry)) +'ed0f00000000000000000101'));
-            console.log("Last entry: "+ this.lastEntry.toString(16));
-            console.log("116: " + numToHex(swap32(entry.time-this.refTime-978307200),8) + '00000000' + numToHex(swap32(this.refTime),8) + '0401020202' + this.accessoryType116 +'020f03' + numToHex(swap16(this.lastEntry)) +'ed0f00000000000000000101');
+                .setValue(hexToBase64(numToHex(swap32(entry.time-this.refTime-978307200),8) + '00000000' + numToHex(swap32(this.refTime),8) + '0401020202' + this.accessoryType116 +'020f03' + numToHex(swap16(this.nextAvailableEntry),4) +'ed0f00000000000000000101'));
+            console.log("Next available entry: "+ this.nextAvailableEntry.toString(16));
+            console.log("116: " + numToHex(swap32(entry.time-this.refTime-978307200),8) + '00000000' + numToHex(swap32(this.refTime),8) + '0401020202' + this.accessoryType116 +'020f03' + numToHex(swap16(this.nextAvailableEntry),4) +'ed0f00000000000000000101');
 
         }
         
