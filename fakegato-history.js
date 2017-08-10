@@ -123,27 +123,44 @@ module.exports = function(pHomebridge) {
                         
                         if ((this.history[this.currentEntry].temp==0 &&
                             this.history[this.currentEntry].pressure==0 &&
-                            this.history[this.currentEntry].humidity==0) || (this.setTime==true))
+                            this.history[this.currentEntry].humidity==0) || (this.history[this.currentEntry].power==0xFFFF) || (this.setTime==true))
                         {	
                             console.log("Data: "+ "15" + numToHex(swap16(this.currentEntry),4) + "0000 0000 0000 81" + numToHex(swap32(this.refTime),8) +"0000 0000 00 0000");
                             callback(null,hexToBase64('15' + numToHex(swap16(this.currentEntry),4) +' 0000 0000 0000 81' + numToHex(swap32(this.refTime),8) + '0000 0000 00 0000'));
                             this.setTime=false;
                         }
                         else
-                        {	
-                            console.log("Data: "+ "10 " + numToHex(swap16(this.currentEntry),4) + " 0000 "
-                                    + numToHex(swap32(this.history[this.currentEntry].time-this.refTime-978307200),8)
-                                    + this.accessoryType117
-                                    + numToHex(swap16(this.history[this.currentEntry].temp*100),4) 
-                                    + numToHex(swap16(this.history[this.currentEntry].humidity*100),4) 
-                                    + numToHex(swap16(this.history[this.currentEntry].pressure*10),4));
-                            callback(null,hexToBase64('10' + numToHex(swap16(this.currentEntry),4)+ ' 0000 ' 
-                                    + numToHex(swap32(this.history[this.currentEntry].time-this.refTime-978307200),8) 
-                                    + this.accessoryType117
-                                    + numToHex(swap16(this.history[this.currentEntry].temp*100),4) 
-                                    + numToHex(swap16(this.history[this.currentEntry].humidity*100),4) 
-                                    + numToHex(swap16(this.history[this.currentEntry].pressure*10),4)));
-                        }
+                            switch (this.accessoryType)
+                            {
+                                case "weather":
+                            	    console.log("Data: "+ "10 " + numToHex(swap16(this.currentEntry),4) + " 0000 "
+                                            + numToHex(swap32(this.history[this.currentEntry].time-this.refTime-978307200),8)
+                                            + this.accessoryType117
+                                            + numToHex(swap16(this.history[this.currentEntry].temp*100),4) 
+                                            + numToHex(swap16(this.history[this.currentEntry].humidity*100),4) 
+                                            + numToHex(swap16(this.history[this.currentEntry].pressure*10),4));
+                                    callback(null,hexToBase64('10' + numToHex(swap16(this.currentEntry),4)+ ' 0000 ' 
+                                            + numToHex(swap32(this.history[this.currentEntry].time-this.refTime-978307200),8) 
+                                            + this.accessoryType117
+                                            + numToHex(swap16(this.history[this.currentEntry].temp*100),4) 
+                                            + numToHex(swap16(this.history[this.currentEntry].humidity*100),4) 
+                                            + numToHex(swap16(this.history[this.currentEntry].pressure*10),4)));
+                                    break;
+                                case "energy":
+                            	    console.log("Data: "+ "10 " + numToHex(swap16(this.currentEntry),4) + " 0000 "
+                                            + numToHex(swap32(this.history[this.currentEntry].time-this.refTime-978307200),8)
+                                            + this.accessoryType117
+                                            + "0000 0000" 
+                                            + numToHex(swap16(this.history[this.currentEntry].power*10),4) 
+                                            + "0000 0000");
+                                    callback(null,hexToBase64('10' + numToHex(swap16(this.currentEntry),4)+ ' 0000 ' 
+                                            + numToHex(swap32(this.history[this.currentEntry].time-this.refTime-978307200),8) 
+                                            + this.accessoryType117
+                                            + "0000 0000" 
+                                            + numToHex(swap16(this.history[this.currentEntry].power*10),4) 
+                                            + "0000 0000"));
+                                    break;
+                            }
                         this.currentEntry++;
                     }
                     else
@@ -176,7 +193,15 @@ module.exports = function(pHomebridge) {
                 if (this.refTime==0)
                 {
                     this.refTime=entry.time-978307200;
-                    this.history[this.nextAvailableEntry]= {time: entry.time, temp:0, pressure:0, humidity:0};
+                    switch (this.accessoryType)
+                        {
+                            case "weather":
+                                this.history[this.nextAvailableEntry]= {time: entry.time, temp:0, pressure:0, humidity:0};
+                                break;
+                            case "energy":
+                                this.history[this.nextAvailableEntry]= {time: entry.time, power:0xFFFF};
+                                break;
+                        }
                     this.nextAvailableEntry++;
                 }
                 this.history[this.nextAvailableEntry] = (entry);
