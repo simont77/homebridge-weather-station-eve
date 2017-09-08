@@ -41,7 +41,7 @@ var CustomCharacteristic = {};
 var EveService = {};
 
 module.exports = function (homebridge) {
-	var FakeGatoHistoryService = require('./fakegato-history')(homebridge);
+	var FakeGatoHistoryService = require('../fakegato-history/fakegato-history')(homebridge);
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 	homebridge.registerAccessory("homebridge-wunderground-extended", "WUWeatherStationExtended", WUWeatherStationExtended);
@@ -274,7 +274,7 @@ module.exports = function (homebridge) {
 				
 		this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 		
-		this.loggingService = new FakeGatoHistoryService("weather");
+		this.loggingService = new FakeGatoHistoryService("weather", this);
 		this.updateWeatherConditions("pws:"+this.location[0]);
 	}
 
