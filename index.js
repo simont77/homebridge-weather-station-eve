@@ -1,5 +1,5 @@
 "use strict";
-var Wunderground = require('wundergroundnode');
+var Wunderground = require('./wundergroundnode');
 const moment = require('moment');
 var inherits = require('util').inherits;
 var Service, Characteristic;

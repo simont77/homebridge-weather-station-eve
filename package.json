@@ -1,6 +1,6 @@
 {
   "name": "homebridge-weather-station-extended",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "A comprehensive weather station plugin for homebridge.",
   "license": "MIT",
   "keywords": [
@@ -13,13 +13,13 @@
     "homebridge": ">=0.2.0"
   },
   "author": {
-    "name": "Arne Blumentritt"
+    "name": "Arne Blumentritt and Simone Tiss"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/naofireblade/homebridge-weather-station-extended.git"
+    "url": "https://github.com/simont77/homebridge-weather-station-extended.git"
   },
   "dependencies": {
-    "wundergroundnode": ">=0.12"
+    "moment": "^2.18.1"
   }
 }
