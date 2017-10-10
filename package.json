@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "moment": "^2.18.1",
-    "fakegato-history":"simont77/fakegato-history#v0.3.0"
+    "fakegato-history":"simont77/fakegato-history#semver:0.3.1"
   }
 }
