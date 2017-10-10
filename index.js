@@ -41,7 +41,7 @@ var CustomCharacteristic = {};
 var EveService = {};
 
 module.exports = function (homebridge) {
-	var FakeGatoHistoryService = require('../fakegato-history/fakegato-history')(homebridge);
+	var FakeGatoHistoryService = require('fakegato-history')(homebridge);
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 	homebridge.registerAccessory("homebridge-wunderground-extended", "WUWeatherStationExtended", WUWeatherStationExtended);

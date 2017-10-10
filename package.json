@@ -1,6 +1,6 @@
 {
   "name": "homebridge-weather-station-extended",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A comprehensive weather station plugin for homebridge.",
   "license": "MIT",
   "keywords": [
@@ -20,6 +20,7 @@
     "url": "https://github.com/simont77/homebridge-weather-station-extended.git"
   },
   "dependencies": {
-    "moment": "^2.18.1"
+    "moment": "^2.18.1",
+    "fakegato-history":"simont77/fakegato-history#v0.3.0"
   }
 }
