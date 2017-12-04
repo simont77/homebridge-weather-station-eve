@@ -220,6 +220,11 @@ module.exports = function (homebridge) {
 			this.addCharacteristic(Characteristic.CurrentTemperature);
 			this.addCharacteristic(Characteristic.CurrentRelativeHumidity);
 			this.addCharacteristic(CustomCharacteristic.AirPressure);
+			this.getCharacteristic(Characteristic.CurrentTemperature)
+				.setProps({
+					minValue: -40,
+					maxValue: 60
+				});
 	};
 	inherits(EveService.WeatherService, Service);
 
