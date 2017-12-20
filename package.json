@@ -13,7 +13,7 @@
     "homebridge": ">=0.2.0"
   },
   "author": {
-    "name": "Arne Blumentritt and Simone Tisa"
+    "name": "Simone Tisa"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "moment": "^2.18.1",
-    "fakegato-history": "simont77/fakegato-history#v0.3.1",
+    "fakegato-history": "^0.3.2",
     "request": "2.x",
     "limiter": "=1.0.5",
     "underscore": "1.x"
