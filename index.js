@@ -15,6 +15,7 @@ var Visibility;
 var UVIndex;
 var MeasuringStation;
 var timeout;
+const version = require('./package.json').version;
 
 var CustomUUID = {
 	// Eve
@@ -243,8 +244,9 @@ module.exports = function (homebridge) {
 
 		this.informationService = new Service.AccessoryInformation();
 		this.informationService
-		.setCharacteristic(Characteristic.Manufacturer, "HomeBridge")
+		.setCharacteristic(Characteristic.Manufacturer, "Simone Tisa")
 		.setCharacteristic(Characteristic.Model, "Weather Underground")
+		.setCharacteristic(Characteristic.FirmwareRevision, version)
 		.setCharacteristic(Characteristic.SerialNumber, this.location[1]);
 
 		
@@ -377,7 +379,7 @@ module.exports = function (homebridge) {
 					that.loggingService.addEntry({time: moment().unix(), temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
 					
 				} else {
-					that.log("Error retrieving the weather conditions")
+					that.log.debug("Error retrieving the weather conditions");
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, "Error!");
 				}
 			});
