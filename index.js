@@ -236,6 +236,7 @@ module.exports = function (homebridge) {
 		this.language = config['language'];
 		this.wunderground = new Wunderground(config['key'], this.language);
 		this.name = config['name'];
+		this.displayName = config['name'];
 		this.location = config['location'];
 		this.timestampOfLastUpdate = 0;
 		this.maxStationID=this.location.length;
