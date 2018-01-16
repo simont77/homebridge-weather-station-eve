@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "moment": "^2.18.1",
-    "fakegato-history": "^0.3.2",
+    "fakegato-history": "^0.3.6",
     "request": "2.x",
     "limiter": "=1.0.5",
     "underscore": "1.x"
