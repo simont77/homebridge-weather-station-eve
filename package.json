@@ -1,6 +1,6 @@
 {
   "name": "homebridge-weather-station-extended",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A comprehensive weather station plugin for homebridge.",
   "license": "MIT",
   "keywords": [
