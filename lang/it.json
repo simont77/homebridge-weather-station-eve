@@ -1,0 +1,18 @@
+{
+    "strings":{
+        "CONDITION_CATEGORY": "Categoria condizioni meteo",
+        "CONDITION": "Condizioni meteo",
+        "RAIN_LAST_HOUR": "Precipitazioni ultima ora",
+        "RAIN_DAY": "Precipitazioni odierne",
+        "WIND_DIRECTION": "Direzione vento",
+        "WIND_SPEED": "Velocità vento",
+        "AIR_PRESSURE": "Pressione aria",
+        "VISIBILITY": "Visibilità",
+        "UV_INDEX": "Indice UV",
+        "STATION": "Stazione",
+        "STATION_ID": "ID Stazione",
+        "LAST_UPDATE": "Ultimo aggiornamento",
+        "LAST_OBSERVATION": "Ultima osservazione",
+        "DEFAULT_STATION": "Stazione predefinita"
+    }
+}

@@ -46,190 +46,6 @@ module.exports = function (homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 	homebridge.registerAccessory("homebridge-wunderground-extended", "WUWeatherStationExtended", WUWeatherStationExtended);
-	
-	CustomCharacteristic.WeatherConditionCategory = function() {
-		Characteristic.call(this, 'Weather Condition Category', CustomUUID.WeatherConditionCategory);
-		this.setProps({
-			format: Characteristic.Formats.UINT8,
-			maxValue: 4,
-			minValue: 0,
-			minStep: 1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.WeatherConditionCategory, Characteristic);
-
-	CustomCharacteristic.WeatherCondition = function() {
-		Characteristic.call(this, 'Condizioni meteo', CustomUUID.WeatherCondition);
-		this.setProps({
-			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.WeatherCondition, Characteristic);
-
-	CustomCharacteristic.Rain1h = function() {
-		Characteristic.call(this, 'Precipitazioni ultima ora', CustomUUID.Rain1h);
-		this.setProps({
-			format: Characteristic.Formats.UINT16,
-			unit: "mm",
-			maxValue: 1000,
-			minValue: 0,
-			minStep: 1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.Rain1h, Characteristic);
-
-	CustomCharacteristic.Rain24h = function() {
-		Characteristic.call(this, 'Precipitazioni odierne', CustomUUID.Rain24h);
-		this.setProps({
-			format: Characteristic.Formats.UINT16,
-			unit: "mm",
-			maxValue: 1000,
-			minValue: 0,
-			minStep: 1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.Rain24h, Characteristic);
-
-	CustomCharacteristic.WindDirection = function() {
-		Characteristic.call(this, 'Direzione vento', CustomUUID.WindDirection);
-		this.setProps({
-			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.WindDirection, Characteristic);
-
-	CustomCharacteristic.WindSpeed = function() {
-		Characteristic.call(this, 'Velocità vento', CustomUUID.WindSpeed);
-		this.setProps({
-			format: Characteristic.Formats.FLOAT,
-			unit: "km/h",
-			maxValue: 100,
-			minValue: 0,
-			minStep: 0.1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.WindSpeed, Characteristic);
-
-	CustomCharacteristic.AirPressure = function() {
-		Characteristic.call(this, 'Air Pressure', CustomUUID.AirPressure);
-		this.setProps({
-			format: Characteristic.Formats.UINT16,
-			unit: "mBar",
-			maxValue: 1100,
-			minValue: 700,
-			minStep: 1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.AirPressure, Characteristic);
-
-	CustomCharacteristic.Visibility = function() {
-		Characteristic.call(this, 'Visibilità', CustomUUID.Visibility);
-		this.setProps({
-			format: Characteristic.Formats.UINT8,
-			unit: "km",
-			maxValue: 100,
-			minValue: 0,
-			minStep: 1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.Visibility, Characteristic);
-
-	CustomCharacteristic.UVIndex = function() {
-		Characteristic.call(this, 'Indice UV', CustomUUID.UVIndex);
-		this.setProps({
-			format: Characteristic.Formats.UINT8,
-			maxValue: 10,
-			minValue: 0,
-			minStep: 1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.UVIndex, Characteristic);
-	
-	CustomCharacteristic.MeasuringStation = function() {
-		Characteristic.call(this, 'Stazione', CustomUUID.MeasuringStation);
-		this.setProps({
-			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.MeasuringStation, Characteristic);
-
-	CustomCharacteristic.StationID = function() {
-		Characteristic.call(this, 'ID Stazione', CustomUUID.StationID);
-		this.setProps({
-			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.StationID, Characteristic);
-	
-	CustomCharacteristic.LastUpdate = function() {
-		Characteristic.call(this, 'Ultimo update', CustomUUID.LastUpdate);
-		this.setProps({
-			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.LastUpdate, Characteristic);
-	
-	CustomCharacteristic.ObservationTime = function() {
-		Characteristic.call(this, 'Ultima osservazione', CustomUUID.ObservationTime);
-		this.setProps({
-			format: Characteristic.Formats.STRING,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.ObservationTime, Characteristic);
-
-	CustomCharacteristic.SelectedStation = function() {
-		Characteristic.call(this, 'Stazione predefinita', CustomUUID.SelectedStation);
-		this.setProps({
-			format: Characteristic.Formats.UINT8,
-			maxValue: 10,
-			minValue: 0,
-			minStep: 1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomCharacteristic.SelectedStation, Characteristic);
-
-	EveService.WeatherService = function(displayName, subtype) {
-			Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
-			this.addCharacteristic(Characteristic.CurrentTemperature);
-			this.addCharacteristic(Characteristic.CurrentRelativeHumidity);
-			this.addCharacteristic(CustomCharacteristic.AirPressure);
-			this.getCharacteristic(Characteristic.CurrentTemperature)
-				.setProps({
-					minValue: -40,
-					maxValue: 60
-				});
-	};
-	inherits(EveService.WeatherService, Service);
-
-	
 
 	function WUWeatherStationExtended(log, config) {
 		
@@ -242,10 +58,194 @@ module.exports = function (homebridge) {
 		this.timestampOfLastUpdate = 0;
 		this.maxStationID=this.location.length;
 
+		const strings = require('./lang/'+this.language+'.json').strings;
+
+		CustomCharacteristic.WeatherConditionCategory = function() {
+			Characteristic.call(this, strings.CONDITION_CATEGORY, CustomUUID.WeatherConditionCategory);
+			this.setProps({
+				format: Characteristic.Formats.UINT8,
+				maxValue: 4,
+				minValue: 0,
+				minStep: 1,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.WeatherConditionCategory, Characteristic);
+
+		CustomCharacteristic.WeatherCondition = function() {
+			Characteristic.call(this, strings.CONDITION, CustomUUID.WeatherCondition);
+			this.setProps({
+				format: Characteristic.Formats.STRING,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.WeatherCondition, Characteristic);
+	
+		CustomCharacteristic.Rain1h = function() {
+			Characteristic.call(this, strings.RAIN_LAST_HOUR, CustomUUID.Rain1h);
+			this.setProps({
+				format: Characteristic.Formats.UINT16,
+				unit: "mm",
+				maxValue: 1000,
+				minValue: 0,
+				minStep: 1,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.Rain1h, Characteristic);
+	
+		CustomCharacteristic.Rain24h = function() {
+			Characteristic.call(this, strings.RAIN_DAY, CustomUUID.Rain24h);
+			this.setProps({
+				format: Characteristic.Formats.UINT16,
+				unit: "mm",
+				maxValue: 1000,
+				minValue: 0,
+				minStep: 1,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.Rain24h, Characteristic);
+	
+		CustomCharacteristic.WindDirection = function() {
+			Characteristic.call(this, strings.WIND_DIRECTION, CustomUUID.WindDirection);
+			this.setProps({
+				format: Characteristic.Formats.STRING,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.WindDirection, Characteristic);
+	
+		CustomCharacteristic.WindSpeed = function() {
+			Characteristic.call(this, strings.WIND_SPEED, CustomUUID.WindSpeed);
+			this.setProps({
+				format: Characteristic.Formats.FLOAT,
+				unit: "km/h",
+				maxValue: 100,
+				minValue: 0,
+				minStep: 0.1,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.WindSpeed, Characteristic);
+	
+		CustomCharacteristic.AirPressure = function() {
+			Characteristic.call(this, strings.AIR_PRESSURE, CustomUUID.AirPressure);
+			this.setProps({
+				format: Characteristic.Formats.UINT16,
+				unit: "mBar",
+				maxValue: 1100,
+				minValue: 700,
+				minStep: 1,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.AirPressure, Characteristic);
+	
+		CustomCharacteristic.Visibility = function() {
+			Characteristic.call(this, strings.VISIBILITY, CustomUUID.Visibility);
+			this.setProps({
+				format: Characteristic.Formats.UINT8,
+				unit: "km",
+				maxValue: 100,
+				minValue: 0,
+				minStep: 1,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.Visibility, Characteristic);
+	
+		CustomCharacteristic.UVIndex = function() {
+			Characteristic.call(this, strings.UV_INDEX, CustomUUID.UVIndex);
+			this.setProps({
+				format: Characteristic.Formats.UINT8,
+				maxValue: 10,
+				minValue: 0,
+				minStep: 1,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.UVIndex, Characteristic);
+		
+		CustomCharacteristic.MeasuringStation = function() {
+			Characteristic.call(this, strings.STATION, CustomUUID.MeasuringStation);
+			this.setProps({
+				format: Characteristic.Formats.STRING,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.MeasuringStation, Characteristic);
+	
+		CustomCharacteristic.StationID = function() {
+			Characteristic.call(this, strings.STATION_ID, CustomUUID.StationID);
+			this.setProps({
+				format: Characteristic.Formats.STRING,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.StationID, Characteristic);
+		
+		CustomCharacteristic.LastUpdate = function() {
+			Characteristic.call(this, strings.LAST_UPDATE, CustomUUID.LastUpdate);
+			this.setProps({
+				format: Characteristic.Formats.STRING,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.LastUpdate, Characteristic);
+		
+		CustomCharacteristic.ObservationTime = function() {
+			Characteristic.call(this, strings.LAST_OBSERVATION, CustomUUID.ObservationTime);
+			this.setProps({
+				format: Characteristic.Formats.STRING,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.ObservationTime, Characteristic);
+	
+		CustomCharacteristic.SelectedStation = function() {
+			Characteristic.call(this, strings.DEFAULT_STATION, CustomUUID.SelectedStation);
+			this.setProps({
+				format: Characteristic.Formats.UINT8,
+				maxValue: 10,
+				minValue: 0,
+				minStep: 1,
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+			});
+			this.value = this.getDefaultValue();
+		};
+		inherits(CustomCharacteristic.SelectedStation, Characteristic);
+	
+		EveService.WeatherService = function(displayName, subtype) {
+				Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
+				this.addCharacteristic(Characteristic.CurrentTemperature);
+				this.addCharacteristic(Characteristic.CurrentRelativeHumidity);
+				this.addCharacteristic(CustomCharacteristic.AirPressure);
+				this.getCharacteristic(Characteristic.CurrentTemperature)
+					.setProps({
+						minValue: -40,
+						maxValue: 60
+					});
+		};
+		inherits(EveService.WeatherService, Service);
+
 		this.informationService = new Service.AccessoryInformation();
 		this.informationService
 		.setCharacteristic(Characteristic.Manufacturer, "Simone Tisa")
-		.setCharacteristic(Characteristic.Model, "Weather Underground")
+		.setCharacteristic(Characteristic.Model, "Weather Underground Eve")
 		.setCharacteristic(Characteristic.FirmwareRevision, version)
 		.setCharacteristic(Characteristic.SerialNumber, this.location[1]);
 

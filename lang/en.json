@@ -1,0 +1,18 @@
+{
+    "strings":{
+        "CONDITION_CATEGORY": "Weather condition category",
+        "CONDITION": "Weather condition",
+        "RAIN_LAST_HOUR": "Rain last hour",
+        "RAIN_DAY": "Daily rain",
+        "WIND_DIRECTION": "Wind direction",
+        "WIND_SPEED": "Wind speed",
+        "AIR_PRESSURE": "Air pressure",
+        "VISIBILITY": "Visibility",
+        "UV_INDEX": "UV index",
+        "STATION": "Station",
+        "STATION_ID": "Station ID",
+        "LAST_UPDATE": "Last update",
+        "LAST_OBSERVATION": " Last observation",
+        "DEFAULT_STATION": "Default station"
+    }
+}
