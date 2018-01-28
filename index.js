@@ -245,7 +245,7 @@ module.exports = function (homebridge) {
 		this.informationService = new Service.AccessoryInformation();
 		this.informationService
 		.setCharacteristic(Characteristic.Manufacturer, "Simone Tisa")
-		.setCharacteristic(Characteristic.Model, "Weather Underground Eve")
+		.setCharacteristic(Characteristic.Model, "Weather Underground")
 		.setCharacteristic(Characteristic.FirmwareRevision, version)
 		.setCharacteristic(Characteristic.SerialNumber, this.location[1]);
 
@@ -282,7 +282,8 @@ module.exports = function (homebridge) {
 				
 		this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 		
-		this.loggingService = new FakeGatoHistoryService("weather", this);
+		//this.loggingService = new FakeGatoHistoryService("weather", this,{storage: 'fs', path: this.config.parent.api.user.cachedAccessoryPath()});
+		this.loggingService = new FakeGatoHistoryService("weather", this,{storage: 'googleDrive', path: 'homebridge'});
 		this.updateWeatherConditions("pws:"+this.location[0]);
 	}
 
