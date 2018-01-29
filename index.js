@@ -1,3 +1,4 @@
+/*jshint esversion: 6,node: true,-W041: false */
 "use strict";
 var Wunderground = require('./wundergroundnode');
 const moment = require('moment');
@@ -50,11 +51,11 @@ module.exports = function (homebridge) {
 	function WUWeatherStationExtended(log, config) {
 		
 		this.log = log;
-		this.language = config['language'];
-		this.wunderground = new Wunderground(config['key'], this.language);
-		this.name = config['name'];
-		this.displayName = config['name'];
-		this.location = config['location'];
+		this.language = config.language;
+		this.wunderground = new Wunderground(config.key, this.language);
+		this.name = config.name;
+		this.displayName = config.name;
+		this.location = config.location;
 		this.timestampOfLastUpdate = 0;
 		this.maxStationID=this.location.length;
 
@@ -298,13 +299,13 @@ module.exports = function (homebridge) {
 		},
 
 		updateWeatherConditions: function(station) {
-			var that = this
+			var that = this;
 		
 			that.wunderground.conditions().request(station, function(err, response){
-				if (!err && response['current_observation'] && response['current_observation']['temp_c']) {
-					that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");;
-					let conditionIcon = response['current_observation']['icon']
-					that.condition = response['current_observation']['weather']
+				if (!err && response.current_observation && response.current_observation.temp_c) {
+					that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");
+					let conditionIcon = response.current_observation.icon;					
+					that.condition = response.current_observation.weather;
 					switch (conditionIcon) {									
 						case "snow":
 						case "sleet":
@@ -312,54 +313,54 @@ module.exports = function (homebridge) {
 						case "chanceflurries":
 						case "chancesleet":
 						case "chancesnow":
-						that.conditionValue = 3
+						that.conditionValue = 3;
 						break;
 						case "rain":
 						case "tstorm":
 						case "tstorms":
 						case "chancerain":
 						case "chancetstorms":
-						that.conditionValue = 2
+						that.conditionValue = 2;
 						break;
 						case "cloudy":
 						case "fog":
 						case "hazy":
 						case "mostlycloudy":
 						case "partlycloudy":
-						that.conditionValue = 1
+						that.conditionValue = 1;
 						break;
 						case "partlysunny":
 						case "clear":
 						case "mostlysunny":
 						case "sunny":
-						that.conditionValue = 0
+						that.conditionValue = 0;
 						break;
 						default:
-						that.conditionValue = 4
+						that.conditionValue = 4;
 						break;
 					}
 
-					that.temperature = response['current_observation']['temp_c'];
-					that.humidity = parseInt(response['current_observation']['relative_humidity'].substr(0, response['current_observation']['relative_humidity'].length-1));
-					that.uv = parseInt(response['current_observation']['UV']);
-					that.rain_1h_metric = parseInt(response['current_observation']['precip_1hr_metric']);
+					that.temperature = response.current_observation.temp_c;
+					that.humidity = parseInt(response.current_observation.relative_humidity.substr(0, response.current_observation.relative_humidity.length-1));
+					that.uv = parseInt(response.current_observation.UV);
+					that.rain_1h_metric = parseInt(response.current_observation.precip_1hr_metric);
 					if (isNaN(that.rain_1h_metric))
 						that.rain_1h_metric = 0;
-					that.rain_24h_metric = parseInt(response['current_observation']['precip_today_metric']);
+					that.rain_24h_metric = parseInt(response.current_observation.precip_today_metric);
 					if (isNaN(that.rain_24h_metric))
 						that.rain_24h_metric = 0;
-					that.windDirection = response['current_observation']['wind_dir'];
-					that.windSpeed = parseFloat(response['current_observation']['wind_kph']);
-					that.airPressure = parseInt(response['current_observation']['pressure_mb']);
-					that.visibility = parseInt(response['current_observation']['visibility_km']);
+					that.windDirection = response.current_observation.wind_dir;
+					that.windSpeed = parseFloat(response.current_observation.wind_kph);
+					that.airPressure = parseInt(response.current_observation.pressure_mb);
+					that.visibility = parseInt(response.current_observation.visibility_km);
 					if (isNaN(that.visibility))
 						that.visibility = 0;
-					that.uvIndex = parseInt(response['current_observation']['UV']);
+					that.uvIndex = parseInt(response.current_observation.UV);
 					if (isNaN(that.uvIndex) || that.uvIndex < 0)
 						that.uvIndex = 0;
-					that.station = response['current_observation']['observation_location']['city'];
-					that.stationID = response['current_observation']['station_id'];
-					that.observationTime = response['current_observation']['observation_time'];
+					that.station = response.current_observation.observation_location.city;
+					that.stationID = response.current_observation.station_id;
+					that.observationTime = response.current_observation.observation_time;
 
 					that.weatherStationService.setCharacteristic(Characteristic.CurrentTemperature, that.temperature);
 					that.weatherStationService.setCharacteristic(Characteristic.CurrentRelativeHumidity, that.humidity);
@@ -385,15 +386,8 @@ module.exports = function (homebridge) {
 				}
 			});
 
-			
-
 			//wunderground limits to 500 api calls a day. Making a call every 10 minutes == 144 calls
 			timeout = setTimeout(this.updateWeatherConditions.bind(this), 10 * 60 * 1000, station);
-
-			
-			
-
-		
 		}
 	};
-}
+};
