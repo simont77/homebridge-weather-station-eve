@@ -1,18 +1,16 @@
 # homebridge-weather-station-extended
 
-This is a weather station plugin for [homebridge](https://github.com/nfarina/homebridge). You can download it via [npm](https://www.npmjs.com/package/homebridge-weather-station-extended).
+This is a weather station plugin for [homebridge](https://github.com/nfarina/homebridge) using Weather Underground service.
 
-Feel free to leave any feedback [here](https://github.com/naofireblade/homebridge-weather-station-extended/issues).
-
-This plugin is a fork of [homebridge-weather-station](https://github.com/kcharwood/homebridge-weather-station) that doesn't get code updates anymore which is a fork of [homebridge-wunderground](https://www.npmjs.com/package/homebridge-wunderground).
+This plugin is a fork of [homebridge-weather-station-extended](https://github.com/naofireblade/homebridge-weather-station-extended). However this plugin tries to emulate at best the Elgato Eve Weather accessory, including historical data for temperature, pressure and humidity. As a result, history and extra characteristics will show only in Eve.app, and the accessory will show as Unsupported in Home.app. If you want and accessory that is, at least partially, supported by Home.app use [homebridge-weather-station-extended](https://github.com/naofireblade/homebridge-weather-station-extended)
 
 # Measured Values
 
-The following values can be displayed and used in HomeKit rules.
+The following values can be displayed and used in HomeKit rules:
 
-- Temperature
-- Air pressure
-- Relative humidity
+- Temperature (with history)
+- Air pressure (with history)
+- Relative humidity (with history)
 - Rain last hour (precip)
 - Rain today (precip)
 - UV-Index
@@ -22,8 +20,7 @@ The following values can be displayed and used in HomeKit rules.
 - Wind direction
 - Wind speed
 - Station
-
-The Apple Home app just knows temperature and relative humidity at the moment. So use e.g. Elgato Eve app to see and use all values.
+- Time and date of last observation
 
 # Example use cases
 
@@ -35,7 +32,7 @@ The Apple Home app just knows temperature and relative humidity at the moment. S
 # Installation
 
 1. Install homebridge using: `npm install -g homebridge`
-2. Install this plugin using: `npm install -g homebridge-weather-station-extended`
+2. Install this plugin using: `npm install -g simont77/homebridge-weather-station-extended`
 3. Gather a free developer key for Weather Underground [here](http://www.wunderground.com/weather/api/).
 4. Update your configuration file. See the sample below.
 
@@ -53,3 +50,5 @@ Add the following information to your config file. Make sure to add your API key
 	}
 ]
 ```
+
+Location can also be an array of station IDs. The first one will be used on homebridge start, but the used station can be changed using the Predefined Station characteristic, or even manually modified editing the Station ID field.
