@@ -1,3 +1,4 @@
+/*jshint esversion: 6,node: true,-W041: false */
 var request = require('request');
 var _       = require('underscore');
 var moment  = require('moment');
@@ -119,6 +120,8 @@ var Wunderground = function(apikey, language) {
      */
     that.request = function(query, callback){
         // A little pre-query validation
+        var url;
+        
         if (!query){
             callback(true, "You must supply a query");
             return;
@@ -131,9 +134,9 @@ var Wunderground = function(apikey, language) {
 
         // Construct the url
         if (language===undefined)
-          var url = 'http://api.wunderground.com/api/' + apikey + '/' + that.chainedRequests.join('') + 'q/'+query + format;
+           url = 'http://api.wunderground.com/api/' + apikey + '/' + that.chainedRequests.join('') + 'q/'+query + format;
         else
-          var url = 'http://api.wunderground.com/api/' + apikey + '/lang:' + language + '/' + that.chainedRequests.join('') + 'q/'+query + format;
+           url = 'http://api.wunderground.com/api/' + apikey + '/lang:' + language + '/' + that.chainedRequests.join('') + 'q/'+query + format;
         that.chainedRequests = [];
 
         // Request the url
