@@ -283,8 +283,10 @@ module.exports = function (homebridge) {
 				
 		this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
 		
-		//this.loggingService = new FakeGatoHistoryService("weather", this,{storage: 'fs', path: this.config.parent.api.user.cachedAccessoryPath()});
-		this.loggingService = new FakeGatoHistoryService("weather", this,{storage: 'googleDrive', path: 'homebridge'});
+		if (config.storage == 'fs')
+			this.loggingService = new FakeGatoHistoryService("weather", this,{storage: 'fs'});
+		else
+			this.loggingService = new FakeGatoHistoryService("weather", this,{storage: 'googleDrive', path: 'homebridge'});
 		this.updateWeatherConditions("pws:"+this.location[0]);
 	}
 
