@@ -191,7 +191,7 @@ module.exports = function (homebridge) {
 			Characteristic.call(this, strings.STATION_ID, CustomUUID.StationID);
 			this.setProps({
 				format: Characteristic.Formats.STRING,
-				perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
 			});
 			this.value = this.getDefaultValue();
 		};
