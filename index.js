@@ -46,9 +46,9 @@ module.exports = function (homebridge) {
 	var FakeGatoHistoryService = require('fakegato-history')(homebridge);
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
-	homebridge.registerAccessory("homebridge-wunderground-extended", "WUWeatherStationExtended", WUWeatherStationExtended);
+	homebridge.registerAccessory("homebridge-wunderground-eve", "WUWeatherStationEve", WUWeatherStationEve);
 
-	function WUWeatherStationExtended(log, config) {
+	function WUWeatherStationEve(log, config) {
 		
 		this.log = log;
 		this.language = config.language;
@@ -246,7 +246,7 @@ module.exports = function (homebridge) {
 		this.informationService = new Service.AccessoryInformation();
 		this.informationService
 		.setCharacteristic(Characteristic.Manufacturer, "Simone Tisa")
-		.setCharacteristic(Characteristic.Model, "Weather Underground")
+		.setCharacteristic(Characteristic.Model, "Weather Underground Eve")
 		.setCharacteristic(Characteristic.FirmwareRevision, version)
 		.setCharacteristic(Characteristic.SerialNumber, this.location[1]);
 
@@ -290,7 +290,7 @@ module.exports = function (homebridge) {
 		this.updateWeatherConditions("pws:"+this.location[0]);
 	}
 
-	WUWeatherStationExtended.prototype = {
+	WUWeatherStationEve.prototype = {
 		identify: function (callback) {
 			this.log("Identify requested!");
 			callback(); // success

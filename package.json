@@ -1,12 +1,13 @@
 {
-  "name": "homebridge-weather-station-extended",
-  "version": "0.3.8",
-  "description": "A comprehensive weather station plugin for homebridge.",
+  "name": "homebridge-weather-station-eve",
+  "version": "0.4.0",
+  "description": "A comprehensive weather station plugin for homebridge emulating Eve weather.",
   "license": "MIT",
   "keywords": [
     "homebridge-plugin",
     "weather-station",
-    "weather"
+    "weather",
+    "eve"
   ],
   "engines": {
     "node": ">=0.12.0",
@@ -17,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/simont77/homebridge-weather-station-extended.git"
+    "url": "https://github.com/simont77/homebridge-weather-station-eve.git"
   },
   "dependencies": {
     "moment": "^2.18.1",

@@ -1,3 +1,5 @@
+## 0.4.0
+* changed name of plugin to homebridge-wunderground-eve, accessory name to "WUWeatherStationEve"
 ## 0.3.8
 * fix name of localization files
 * added optional "storage" parameter. If "fs" will persist history on filesystem, otherwise on googledrive
