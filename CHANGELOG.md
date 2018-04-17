@@ -1,3 +1,7 @@
+## 0.3.8
+* fix name of localization files
+* added optional "storage" parameter. If "fs" will persist history on filesystem, otherwise on googledrive
+* fix for Eve 3.2 and custom "Station ID" characteristics
 ## 0.3.7
 * Updated fakegato-history dependency and added history persistance on google drive
 * Added localization
