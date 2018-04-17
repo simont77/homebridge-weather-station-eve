@@ -248,7 +248,7 @@ module.exports = function (homebridge) {
 		.setCharacteristic(Characteristic.Manufacturer, "Simone Tisa")
 		.setCharacteristic(Characteristic.Model, "Weather Underground Eve")
 		.setCharacteristic(Characteristic.FirmwareRevision, version)
-		.setCharacteristic(Characteristic.SerialNumber, this.location[1]);
+		.setCharacteristic(Characteristic.SerialNumber, "000");
 
 		
 		this.weatherStationService = new EveService.WeatherService(this.name);
