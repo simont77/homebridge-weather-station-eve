@@ -56,6 +56,7 @@ module.exports = function (homebridge) {
 		this.name = config.name;
 		this.displayName = config.name;
 		this.location = config.location;
+		this.serial = config.serial || "000";
 		this.timestampOfLastUpdate = 0;
 		this.maxStationID=this.location.length;
 
@@ -248,7 +249,7 @@ module.exports = function (homebridge) {
 		.setCharacteristic(Characteristic.Manufacturer, "Simone Tisa")
 		.setCharacteristic(Characteristic.Model, "Weather Underground Eve")
 		.setCharacteristic(Characteristic.FirmwareRevision, version)
-		.setCharacteristic(Characteristic.SerialNumber, "000");
+		.setCharacteristic(Characteristic.SerialNumber, this.serial);
 
 		
 		this.weatherStationService = new EveService.WeatherService(this.name);
