@@ -1,6 +1,6 @@
 {
   "name": "homebridge-weather-station-eve",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A comprehensive weather station plugin for homebridge emulating Eve weather.",
   "license": "MIT",
   "keywords": [
