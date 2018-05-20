@@ -49,7 +49,7 @@ module.exports = function (homebridge) {
 	homebridge.registerAccessory("homebridge-wunderground-eve", "WUWeatherStationEve", WUWeatherStationEve);
 
 	function WUWeatherStationEve(log, config) {
-		
+
 		this.log = log;
 		this.language = config.language;
 		this.wunderground = new Wunderground(config.key, this.language);
@@ -58,11 +58,11 @@ module.exports = function (homebridge) {
 		this.location = config.location;
 		this.serial = config.serial || "000";
 		this.timestampOfLastUpdate = 0;
-		this.maxStationID=this.location.length;
+		this.maxStationID = this.location.length;
 
-		const strings = require('./lang/'+this.language+'.json').strings;
+		const strings = require('./lang/' + this.language + '.json').strings;
 
-		CustomCharacteristic.WeatherConditionCategory = function() {
+		CustomCharacteristic.WeatherConditionCategory = function () {
 			Characteristic.call(this, strings.CONDITION_CATEGORY, CustomUUID.WeatherConditionCategory);
 			this.setProps({
 				format: Characteristic.Formats.UINT8,
@@ -75,7 +75,7 @@ module.exports = function (homebridge) {
 		};
 		inherits(CustomCharacteristic.WeatherConditionCategory, Characteristic);
 
-		CustomCharacteristic.WeatherCondition = function() {
+		CustomCharacteristic.WeatherCondition = function () {
 			Characteristic.call(this, strings.CONDITION, CustomUUID.WeatherCondition);
 			this.setProps({
 				format: Characteristic.Formats.STRING,
@@ -84,8 +84,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.WeatherCondition, Characteristic);
-	
-		CustomCharacteristic.Rain1h = function() {
+
+		CustomCharacteristic.Rain1h = function () {
 			Characteristic.call(this, strings.RAIN_LAST_HOUR, CustomUUID.Rain1h);
 			this.setProps({
 				format: Characteristic.Formats.UINT16,
@@ -98,8 +98,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.Rain1h, Characteristic);
-	
-		CustomCharacteristic.Rain24h = function() {
+
+		CustomCharacteristic.Rain24h = function () {
 			Characteristic.call(this, strings.RAIN_DAY, CustomUUID.Rain24h);
 			this.setProps({
 				format: Characteristic.Formats.UINT16,
@@ -112,8 +112,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.Rain24h, Characteristic);
-	
-		CustomCharacteristic.WindDirection = function() {
+
+		CustomCharacteristic.WindDirection = function () {
 			Characteristic.call(this, strings.WIND_DIRECTION, CustomUUID.WindDirection);
 			this.setProps({
 				format: Characteristic.Formats.STRING,
@@ -122,8 +122,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.WindDirection, Characteristic);
-	
-		CustomCharacteristic.WindSpeed = function() {
+
+		CustomCharacteristic.WindSpeed = function () {
 			Characteristic.call(this, strings.WIND_SPEED, CustomUUID.WindSpeed);
 			this.setProps({
 				format: Characteristic.Formats.FLOAT,
@@ -136,8 +136,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.WindSpeed, Characteristic);
-	
-		CustomCharacteristic.AirPressure = function() {
+
+		CustomCharacteristic.AirPressure = function () {
 			Characteristic.call(this, strings.AIR_PRESSURE, CustomUUID.AirPressure);
 			this.setProps({
 				format: Characteristic.Formats.UINT16,
@@ -150,8 +150,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.AirPressure, Characteristic);
-	
-		CustomCharacteristic.Visibility = function() {
+
+		CustomCharacteristic.Visibility = function () {
 			Characteristic.call(this, strings.VISIBILITY, CustomUUID.Visibility);
 			this.setProps({
 				format: Characteristic.Formats.UINT8,
@@ -164,8 +164,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.Visibility, Characteristic);
-	
-		CustomCharacteristic.UVIndex = function() {
+
+		CustomCharacteristic.UVIndex = function () {
 			Characteristic.call(this, strings.UV_INDEX, CustomUUID.UVIndex);
 			this.setProps({
 				format: Characteristic.Formats.UINT8,
@@ -177,8 +177,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.UVIndex, Characteristic);
-		
-		CustomCharacteristic.MeasuringStation = function() {
+
+		CustomCharacteristic.MeasuringStation = function () {
 			Characteristic.call(this, strings.STATION, CustomUUID.MeasuringStation);
 			this.setProps({
 				format: Characteristic.Formats.STRING,
@@ -187,8 +187,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.MeasuringStation, Characteristic);
-	
-		CustomCharacteristic.StationID = function() {
+
+		CustomCharacteristic.StationID = function () {
 			Characteristic.call(this, strings.STATION_ID, CustomUUID.StationID);
 			this.setProps({
 				format: Characteristic.Formats.STRING,
@@ -197,8 +197,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.StationID, Characteristic);
-		
-		CustomCharacteristic.LastUpdate = function() {
+
+		CustomCharacteristic.LastUpdate = function () {
 			Characteristic.call(this, strings.LAST_UPDATE, CustomUUID.LastUpdate);
 			this.setProps({
 				format: Characteristic.Formats.STRING,
@@ -207,8 +207,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.LastUpdate, Characteristic);
-		
-		CustomCharacteristic.ObservationTime = function() {
+
+		CustomCharacteristic.ObservationTime = function () {
 			Characteristic.call(this, strings.LAST_OBSERVATION, CustomUUID.ObservationTime);
 			this.setProps({
 				format: Characteristic.Formats.STRING,
@@ -217,8 +217,8 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.ObservationTime, Characteristic);
-	
-		CustomCharacteristic.SelectedStation = function() {
+
+		CustomCharacteristic.SelectedStation = function () {
 			Characteristic.call(this, strings.DEFAULT_STATION, CustomUUID.SelectedStation);
 			this.setProps({
 				format: Characteristic.Formats.UINT8,
@@ -230,30 +230,30 @@ module.exports = function (homebridge) {
 			this.value = this.getDefaultValue();
 		};
 		inherits(CustomCharacteristic.SelectedStation, Characteristic);
-	
-		EveService.WeatherService = function(displayName, subtype) {
-				Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
-				this.addCharacteristic(Characteristic.CurrentTemperature);
-				this.addCharacteristic(Characteristic.CurrentRelativeHumidity);
-				this.addCharacteristic(CustomCharacteristic.AirPressure);
-				this.getCharacteristic(Characteristic.CurrentTemperature)
-					.setProps({
-						minValue: -40,
-						maxValue: 60
-					});
+
+		EveService.WeatherService = function (displayName, subtype) {
+			Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
+			this.addCharacteristic(Characteristic.CurrentTemperature);
+			this.addCharacteristic(Characteristic.CurrentRelativeHumidity);
+			this.addCharacteristic(CustomCharacteristic.AirPressure);
+			this.getCharacteristic(Characteristic.CurrentTemperature)
+				.setProps({
+					minValue: -40,
+					maxValue: 60
+				});
 		};
 		inherits(EveService.WeatherService, Service);
 
 		this.informationService = new Service.AccessoryInformation();
 		this.informationService
-		.setCharacteristic(Characteristic.Manufacturer, "Simone Tisa")
-		.setCharacteristic(Characteristic.Model, "Weather Underground Eve")
-		.setCharacteristic(Characteristic.FirmwareRevision, version)
-		.setCharacteristic(Characteristic.SerialNumber, this.serial);
+			.setCharacteristic(Characteristic.Manufacturer, "Simone Tisa")
+			.setCharacteristic(Characteristic.Model, "Weather Underground Eve")
+			.setCharacteristic(Characteristic.FirmwareRevision, version)
+			.setCharacteristic(Characteristic.SerialNumber, this.serial);
 
-		
+
 		this.weatherStationService = new EveService.WeatherService(this.name);
-		
+
 		this.weatherStationService.addCharacteristic(CustomCharacteristic.WeatherCondition);
 		this.weatherStationService.addCharacteristic(CustomCharacteristic.WeatherConditionCategory);
 		this.weatherStationService.addCharacteristic(CustomCharacteristic.Rain1h);
@@ -267,28 +267,28 @@ module.exports = function (homebridge) {
 		this.weatherStationService.addCharacteristic(CustomCharacteristic.ObservationTime);
 		this.weatherStationService.addCharacteristic(CustomCharacteristic.SelectedStation);
 		this.weatherStationService.addCharacteristic(CustomCharacteristic.StationID);
-		
-		this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).props.maxValue = this.maxStationID-1;
+
+		this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).props.maxValue = this.maxStationID - 1;
 
 
 		this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation)
-				.on('change', (callback) => {
-					this.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, this.location[this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).value]);
-				});
-		
+			.on('change', (callback) => {
+				this.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, this.location[this.weatherStationService.getCharacteristic(CustomCharacteristic.SelectedStation).value]);
+			});
+
 		this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID)
-				.on('change', (callback) => {
-					clearTimeout(timeout);
-					this.updateWeatherConditions("pws:" + this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID).value);
-				});
-				
-		this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation,0);
-		
+			.on('change', (callback) => {
+				clearTimeout(timeout);
+				this.updateWeatherConditions("pws:" + this.weatherStationService.getCharacteristic(CustomCharacteristic.StationID).value);
+			});
+
+		this.weatherStationService.setCharacteristic(CustomCharacteristic.SelectedStation, 0);
+
 		if (config.storage == 'fs')
-			this.loggingService = new FakeGatoHistoryService("weather", this,{storage: 'fs'});
+			this.loggingService = new FakeGatoHistoryService("weather", this, { storage: 'fs' });
 		else
-			this.loggingService = new FakeGatoHistoryService("weather", this,{storage: 'googleDrive', path: 'homebridge'});
-		this.updateWeatherConditions("pws:"+this.location[0]);
+			this.loggingService = new FakeGatoHistoryService("weather", this, { storage: 'googleDrive', path: 'homebridge' });
+		this.updateWeatherConditions("pws:" + this.location[0]);
 	}
 
 	WUWeatherStationEve.prototype = {
@@ -301,50 +301,50 @@ module.exports = function (homebridge) {
 			return [this.informationService, this.weatherStationService, this.loggingService];
 		},
 
-		updateWeatherConditions: function(station) {
+		updateWeatherConditions: function (station) {
 			var that = this;
-		
-			that.wunderground.conditions().request(station, function(err, response){
+
+			that.wunderground.conditions().request(station, function (err, response) {
 				if (!err && response.current_observation && response.current_observation.temp_c) {
 					that.timestampOfLastUpdate = moment().locale('it').format("HH:mm, DD-MM-YY");
-					let conditionIcon = response.current_observation.icon;					
+					let conditionIcon = response.current_observation.icon;
 					that.condition = response.current_observation.weather;
-					switch (conditionIcon) {									
+					switch (conditionIcon) {
 						case "snow":
 						case "sleet":
 						case "flurries":
 						case "chanceflurries":
 						case "chancesleet":
 						case "chancesnow":
-						that.conditionValue = 3;
-						break;
+							that.conditionValue = 3;
+							break;
 						case "rain":
 						case "tstorm":
 						case "tstorms":
 						case "chancerain":
 						case "chancetstorms":
-						that.conditionValue = 2;
-						break;
+							that.conditionValue = 2;
+							break;
 						case "cloudy":
 						case "fog":
 						case "hazy":
 						case "mostlycloudy":
 						case "partlycloudy":
-						that.conditionValue = 1;
-						break;
+							that.conditionValue = 1;
+							break;
 						case "partlysunny":
 						case "clear":
 						case "mostlysunny":
 						case "sunny":
-						that.conditionValue = 0;
-						break;
+							that.conditionValue = 0;
+							break;
 						default:
-						that.conditionValue = 4;
-						break;
+							that.conditionValue = 4;
+							break;
 					}
 
 					that.temperature = response.current_observation.temp_c;
-					that.humidity = parseInt(response.current_observation.relative_humidity.substr(0, response.current_observation.relative_humidity.length-1));
+					that.humidity = parseInt(response.current_observation.relative_humidity.substr(0, response.current_observation.relative_humidity.length - 1));
 					that.uv = parseInt(response.current_observation.UV);
 					that.rain_1h_metric = parseInt(response.current_observation.precip_1hr_metric);
 					if (isNaN(that.rain_1h_metric))
@@ -367,22 +367,22 @@ module.exports = function (homebridge) {
 
 					that.weatherStationService.setCharacteristic(Characteristic.CurrentTemperature, that.temperature);
 					that.weatherStationService.setCharacteristic(Characteristic.CurrentRelativeHumidity, that.humidity);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.WeatherConditionCategory,that.conditionValue);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.WeatherCondition,that.condition);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.Rain1h,that.rain_1h_metric);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.Rain24h,that.rain_24h_metric);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.WindDirection,that.windDirection);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.WindSpeed,that.windSpeed);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.AirPressure,that.airPressure);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.Visibility,that.visibility);
-					that.weatherStationService.setCharacteristic(CustomCharacteristic.UVIndex,that.uvIndex);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.WeatherConditionCategory, that.conditionValue);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.WeatherCondition, that.condition);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.Rain1h, that.rain_1h_metric);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.Rain24h, that.rain_24h_metric);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.WindDirection, that.windDirection);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.WindSpeed, that.windSpeed);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.AirPressure, that.airPressure);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.Visibility, that.visibility);
+					that.weatherStationService.setCharacteristic(CustomCharacteristic.UVIndex, that.uvIndex);
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, that.station);
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.LastUpdate, that.timestampOfLastUpdate);
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.ObservationTime, that.observationTime);
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.StationID, that.stationID);
-					
-					that.loggingService.addEntry({time: moment().unix(), temp:that.temperature, pressure:that.airPressure, humidity:that.humidity});
-					
+
+					that.loggingService.addEntry({ time: moment().unix(), temp: that.temperature, pressure: that.airPressure, humidity: that.humidity });
+
 				} else {
 					that.log.debug("Error retrieving the weather conditions");
 					that.weatherStationService.setCharacteristic(CustomCharacteristic.MeasuringStation, "Error!");
